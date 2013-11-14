@@ -8,8 +8,19 @@ $ ->
     dispatcher.on_open = (data) ->
         console.log "Connection established: #{data}"
 
-    $('#send_chat').bind 'click', (message) ->
-        dispatcher.trigger 'chat_sent', message
+    sendchatsuccess = (message) ->
+            console.log('received' + message)
+            $('#log').append($('<div/>').html(message['message']))
 
-    dispatcher.bind 'server_msg', (message) ->
+    sendchatfailure = (message) ->
+            console.log('failure!' + message)
+
+    $('#send_chat').on 'click', () ->
+        console.log "send!"
+        dispatcher.trigger 'chat_sent', $('#sendbox').val(), sendchatsuccess, sendchatfailure
+
+        $('#sendbox').val('')
+
+    dispatcher.bind 'chats.server_msg', (message) ->
         console.log(message)
+        $('#log').append($('<div/>').html(message))
