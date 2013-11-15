@@ -1,0 +1,26 @@
+Database schema (for MVP)
+
+Table
+* string initial_bag (we limit bag size on purpose)
+* boolean game_over
+
+User
+* string username
+* string password_digest
+* integer high_score (for now, default 0; later, may just allow null if user has never played)
+* integer table_id
+* flip_request_turn_number (allow null)
+
+Turn
+* integer table_id
+* integer turn_number
+* string type
+> Morph
+  * integer changed_turn_id
+  * integer doer_user_id
+  * string word
+> Build
+  * string word
+  * integer doer_user_id
+> Flip
+
