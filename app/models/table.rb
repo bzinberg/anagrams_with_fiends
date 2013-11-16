@@ -27,7 +27,7 @@ class Table < ActiveRecord::Base
   end
 
   def current_state
-    state_before_turn_number(next_turn_number + 1)
+    state_before_turn_number(next_turn_number)
   end
 
   def process_submitted_buildmorph(turn)
