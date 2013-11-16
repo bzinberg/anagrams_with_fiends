@@ -10,8 +10,8 @@ class SessionsController < ApplicationController
   # Controls the log in action. 
   # For any invalid combination of username and password, the page will redirect to itself with an error message 
   def create
-    user = User.authenticate(params[:username], params[:password])
-    if user
+    user = User.find_by_username(params[:username])
+    if user && user.authenticate(params[:password])
       session[:user_id] = user.id
       redirect_to root_path
     else
