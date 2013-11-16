@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  type: 
+  turn_number: 1
+  changed_turn_id: 1
+  doer_user_id: 1
+  word: MyString
+
+two:
+  type: 
+  turn_number: 1
+  changed_turn_id: 1
+  doer_user_id: 1
+  word: MyString

@@ -1,9 +1,9 @@
-
 class User < ActiveRecord::Base
 
-  validates :password, confirmation: true, on: :create
+  validates :password_digest, confirmation: true, on: :create
   validates :username, presence: true, uniqueness: true
-
+  belongs_to :table
+  has_many :turns
   # Check if the username and password are valid
   def self.authenticate(username, password)
     user = find_by_username(username)
@@ -17,4 +17,3 @@ class User < ActiveRecord::Base
 	   User.where("username like ?","%"+username.to_s+"%");
   end
 end
-
