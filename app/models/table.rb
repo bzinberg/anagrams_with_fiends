@@ -18,12 +18,30 @@ class Table < ActiveRecord::Base
     end
   end
 
-  def state_at_turn_number(n)
+  def state_before_turn_number(n)
     state = State.new
-    turns.where(turn_number: (1..n)).each do |turn|
+    turns.where(turn_number: (1..n-1)).each do |turn|
       state.register_turn(turn)
     end
     return state
+  end
+
+  def process_submitted_buildmorph(turn)
+    # For builds and morphs, unlike flips, we assume a player wouldn't want to
+    # "take back" his attempted move based on new developments in the game.
+    # Also, we don't want users to be able to screw up the game by submitting a
+    # build or morph with an earlier turn number than the current one.  Thus we
+    # might as well do:
+    turn.turn_number = next_turn_number
+
+    state = state_before_turn_number(turn.turn_number)
+    if state.register_turn(turn)
+      turns.append(turn)
+      save
+      # TODO have something that increments and tries next turn number upon
+      # save failure, to deal with races in the final product
+      return state
+    end
   end
 
   class State
