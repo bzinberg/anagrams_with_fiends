@@ -18,6 +18,11 @@ ActiveRecord::Schema.define(version: 20131115052002) do
     t.datetime "updated_at"
   end
 
+  create_table "sessions", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "tables", force: true do |t|
     t.string   "initial_bag"
     t.boolean  "game_over"
