@@ -19,11 +19,15 @@ class Table < ActiveRecord::Base
   end
 
   def state_before_turn_number(n)
-    state = State.new
+    state = State.new(self)
     turns.where(turn_number: (1..n-1)).each do |turn|
       state.register_turn(turn)
     end
     return state
+  end
+
+  def current_state
+    state_before_turn_number(next_turn_number + 1)
   end
 
   def process_submitted_buildmorph(turn)
@@ -34,13 +38,19 @@ class Table < ActiveRecord::Base
     # might as well do:
     turn.turn_number = next_turn_number
 
+    # TODO this part is a bit messy
     state = state_before_turn_number(turn.turn_number)
     if state.register_turn(turn)
       turns.append(turn)
-      save
-      # TODO have something that increments and tries next turn number upon
-      # save failure, to deal with races in the final product
-      return state
+      if save
+        return state
+      else
+        # TODO have something that increments and tries next turn number upon
+        # save failure, to deal with races in the final product
+        return false
+      end
+    else
+      return false
     end
   end
 
@@ -59,11 +69,12 @@ class Table < ActiveRecord::Base
       return Hash[@stashes.map {|key,val| [key, Set.new(val)]}]
     end
 
-    def initialize
+    def initialize(table)
+      @table = table
       # if an entry is queried that doesn't exist, creates a new Set to fill
       # the entry
       @stashes = Hash.new {|h,key| h[key] = Set.new}
-      @bag = initial_bag
+      @bag = String.new(table.initial_bag)
       # We think of the pool as an array of characters
       @pool = ''
       @next_turn_number = 1
@@ -73,15 +84,18 @@ class Table < ActiveRecord::Base
     end
 
     def register_turn(turn)
-      case turn.class
+      # Because of ruby strangeness, we say "case turn" rather than "case
+      # turn.class"
+      case turn
       when Flip
-        register_flip(turn)
+        retval = register_flip
       when Build
-        register_build(turn)
+        retval = register_build(turn)
       when Morph
-        register_morph(turn)
+        retval = register_morph(turn)
       end
       @next_turn_number = turn.turn_number + 1
+      return retval
     end
 
     def register_flip
@@ -94,6 +108,7 @@ class Table < ActiveRecord::Base
     end
 
     def register_build(build)
+      puts "Upon register_build: #{build.word}"
       if !(
         @pool.contain_anagram_of?(build.word) and
         # check whether word is in dictionary (or should this go in the
@@ -105,6 +120,9 @@ class Table < ActiveRecord::Base
       end
 
       @stashes[build.doer].add(build)
+      build.word.each_char do |c|
+        @pool.sub!(c, '')
+      end
     end
 
     def register_morph(morph)

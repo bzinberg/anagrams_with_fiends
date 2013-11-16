@@ -14,4 +14,10 @@ class User < ActiveRecord::Base
     table.register_flip_requests
   end
 
+  def submit_build(word)
+    build = Build.new(doer: self, word: word, table: table)
+    puts "Upon submit: #{word}, #{build.word}"
+    table.process_submitted_buildmorph(build)
+  end
+
 end
