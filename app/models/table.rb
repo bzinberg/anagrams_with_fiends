@@ -18,4 +18,102 @@ class Table < ActiveRecord::Base
     end
   end
 
+  def state_at_turn_number(n)
+    state = State.new
+    turns.where(turn_number: (1..n)).each do |turn|
+      state.register_turn(turn)
+    end
+    return state
+  end
+
+  class State
+    #TODO not finished yet
+    attr_reader :next_turn_number
+    attr_reader :valid
+    def bag
+      return String.new(@bag)
+    end
+    def pool
+      return String.new(@pool)
+    end
+    def stashes
+      # copy to avoid rep exposure
+      return Hash[@stashes.map {|key,val| [key, Set.new(val)]}]
+    end
+
+    def initialize
+      # if an entry is queried that doesn't exist, creates a new Set to fill
+      # the entry
+      @stashes = Hash.new {|h,key| h[key] = Set.new}
+      @bag = initial_bag
+      # We think of the pool as an array of characters
+      @pool = ''
+      @next_turn_number = 1
+
+      # If there are errors, we will set this flag to false
+      @valid = true
+    end
+
+    def register_turn(turn)
+      case turn.class
+      when Flip
+        register_flip(turn)
+      when Build
+        register_build(turn)
+      when Morph
+        register_morph(turn)
+      end
+      @next_turn_number = turn.turn_number + 1
+    end
+
+    def register_flip
+      if @bag.empty?
+        @valid = false
+        return false
+      end
+      @pool << @bag[0]
+      @bag[0] = ''
+    end
+
+    def register_build(build)
+      if !(
+        @pool.contain_anagram_of?(build.word) and
+        # check whether word is in dictionary (or should this go in the
+        # validation?)
+        true # FIXME
+      )
+        @valid = false
+        return false
+      end
+
+      @stashes[build.doer].add(build)
+    end
+
+    def register_morph(morph)
+      need_from_pool = morph.word.charwise_remove(morph.changed_turn.word)
+      if !(
+        # TODO maybe validation should be done elsewhere
+        morph.valid? and
+        need_from_pool and
+        # does the word we're trying to change still exist in a stash?
+        @stashes[morph.changed_turn.doer].contain?(morph.changed_turn) and
+        @pool.contain_anagram_of?(need_from_pool) and
+        # TODO logic to check whether the change is not trivial (e.g.  no
+        # change, or a simple pluralization) (or maybe this should go in the
+        # validation?
+        true # FIXME
+      )
+        @valid = false
+        return false
+      end
+
+      @stashes[morph.changed_turn.doer].delete(morph.changed_turn)
+      @stashes[morph.doer].add(morph)
+      need_from_pool.each_char do |c|
+        @pool.sub!(c, '')
+      end
+    end
+
+  end
+
 end
