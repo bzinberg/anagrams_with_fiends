@@ -25,6 +25,10 @@ gem 'jquery-rails'
 # pro-tip, Turbolinks screws up javascript document.ready
 # gem 'turbolinks'
 
+# Use thin instead of webrick for web server; gets rid of annoying warnings, and thin is based on EventMachine
+# so it works well with websockets
+gem 'thin'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
 
@@ -35,6 +39,9 @@ end
 
 # Use ActiveModel has_secure_password
 gem 'bcrypt-ruby', '~> 3.0.1'
+
+# websockets support
+gem 'websocket-rails'
 
 # Use unicorn as the app server
 # gem 'unicorn'
