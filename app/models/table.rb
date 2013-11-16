@@ -132,7 +132,7 @@ class Table < ActiveRecord::Base
         morph.valid? and
         need_from_pool and
         # does the word we're trying to change still exist in a stash?
-        @stashes[morph.changed_turn.doer].contain?(morph.changed_turn) and
+        @stashes[morph.changed_turn.doer].include?(morph.changed_turn) and
         @pool.contain_anagram_of?(need_from_pool) and
         # TODO logic to check whether the change is not trivial (e.g.  no
         # change, or a simple pluralization) (or maybe this should go in the
