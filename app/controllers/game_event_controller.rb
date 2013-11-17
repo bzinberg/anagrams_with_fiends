@@ -54,8 +54,19 @@ class GameEventController < WebsocketRails::BaseController
   end
 
   def morph_request
-    puts 'morph submitted'
-    #current_user.submit_build()
+    @table = current_user.table
+    message[:changed_turn_number] ||= -1
+    message[:word] ||= ''
+    changed_turn_number = message[:changed_turn_number]
+    changed_turn = @table.turns.exists?(turn_number: changed_turn_number) ? @table.turns.find_by_turn_number(changed_turn_number) : nil
+    word = message[:word]
+    puts "morph submitted: #{changed_turn_number}, #{word}"
+    if changed_turn and current_user.submit_morph(changed_turn, word)
+      puts 'Successful morph request'
+      broadcast_message :new_state, @table.to_h, namespace: :game_event
+    else
+      puts 'Failed morph request'
+    end
   end
 
   private

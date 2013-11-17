@@ -85,8 +85,19 @@ window.initTable = () ->
             entry[1].split('').forEach((letter) ->
                 appendLetter($stashDiv, letter)
             )
+            $morphButton = $('<button>').text('Morph this').click(() ->
+                alert('just making sure' + entry[0] + submitMorph)
+                submitMorph(entry[0])
+            )
+            $wordDiv.append($morphButton)
             $stashDiv.append($wordDiv)
         )
+
+    submitMorph = (changed_turn_number) ->
+        # TODO don't use window.dispatcher
+        window.dispatcher.trigger 'table.morph_request', {changed_turn_number: changed_turn_number, word: $('#word_entry').val()}
+
+
 
     updateStashes = (state) ->
         console.log("updating stashes")
@@ -94,6 +105,7 @@ window.initTable = () ->
         updateSingleStash(state, name) for name, words of state.stashes
 
     findStashDivByName = (name) ->
+        # TODO for multiplayer mode, this will need to be a nontrivial method
         return $("#stashDiv")
 
     onready = () ->
