@@ -1,14 +1,14 @@
-Tiles left in bag: <span id="bagBox"></span>
+<%= javascript 'game.coffee.js' %> 
+
+<div>Tiles left in bag: <span id="bagBox"></span></div>
 <div id="poolDiv"></div>
-Stash:
+<div>Stash:</div>
 <div id="stashDiv"></div>
 
 <div id="commands">
-	<%= button_to "Flip Tile", { :action => "flip"},
-          :confirm => "Are you sure?", :method => :post %>
-   <input id="word" type="text" value="Enter Word Here"/>
-	<%= button_to "Submit", { :action => "submit"}, :method => :post %>
-	<%= button_to "Leave game", { :action => "leave"},
-          :confirm => "Are you sure?", :method => :post %>
+    <button type="button" id="flip_tile">Flip Tile</button>
+    <input id="word" type="text" placeholder="Enter Word Here"/>
 </div>
-<script src="assets/table.js"></script>
+
+<div id="gamelog"/>
+<!--<script src="assets/table.js"></script>-->

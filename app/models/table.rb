@@ -1,9 +1,11 @@
 class Table < ActiveRecord::Base
+  require 'securerandom'
+
   INITIAL_BAG_LETTERS = 'jjkkqqxxzzbbbcccfffhhhmmmpppvvvwwwyyygggglllllddddddssssssuuuuuunnnnnnnntttttttttrrrrrrrrroooooooooooiiiiiiiiiiiiaaaaaaaaaaaaaeeeeeeeeeeeeeeeeee'
   has_many :fiends, class_name: 'User', inverse_of: :table
   has_many :turns, inverse_of: :table
 
-  before_create :generate_initial_bag
+  before_create :init_table
 
   # One greater than the largest turn number of a turn at this
   # table, or 1 if this table has no turns
@@ -18,6 +20,9 @@ class Table < ActiveRecord::Base
     if fiends.all? {|u| u.flip_request_turn_number == n}
       flip = Flip.new(turn_number: n)
       turns.append(flip)
+      return true
+    else
+      return false
     end
   end
 
@@ -46,7 +51,7 @@ class Table < ActiveRecord::Base
     if state.register_turn(turn)
       turns.append(turn)
       if save
-        return state
+        return true
       else
         # TODO have something that increments and tries next turn number upon
         # save failure, to deal with races in the final product
@@ -113,10 +118,8 @@ class Table < ActiveRecord::Base
     def register_build(build)
       puts "Upon register_build: #{build.word}"
       if !(
-        @pool.contain_anagram_of?(build.word) and
-        # check whether word is in dictionary (or should this go in the
-        # validation?)
-        true # FIXME
+        # check whether word is in dictionary (or should this go in the validation?)
+        @pool.contain_anagram_of?(build.word) and true # FIXME
       )
         @valid = false
         return false
@@ -155,9 +158,29 @@ class Table < ActiveRecord::Base
 
   end
 
+  # Generate a hash which can be passed to the client-side as json
+  def to_h
+    json = {}
+    json['next_turn_number'] = next_turn_number
+    state = current_state
+    stashes_to_send = state.stashes.map do |user,turns|
+      [user.username, turns.to_a.map{|turn| [turn.turn_number, turn.word]}] 
+    end
+    json['stashes'] =  Hash[stashes_to_send]
+    json['pool'] = state.pool
+    json['bag_size'] = state.bag.size
+    return json
+  end
+
   private
     
+    def init_table
+      self.uuid = SecureRandom.hex
+      generate_initial_bag
+    end
+
     def generate_initial_bag
+        puts 'generating bag'
       self.initial_bag = INITIAL_BAG_LETTERS.split('').shuffle.join('')
     end
 

@@ -1,4 +1,4 @@
-json.array!(@games) do |game|
-  json.extract! game, 
-  json.url game_url(game, format: :json)
+json.array!(@tables) do |table|
+  json.extract! table, 
+  json.url table_url(table, format: :json)
 end

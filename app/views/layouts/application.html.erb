@@ -7,6 +7,17 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+    <div id="header">
+        <% if signed_in? %>
+            Welcome to Anagrams with Fiends! You are logged in.
+            <%= link_to 'Log Out', log_out_path %>
+        <% else %>
+            Welcome to Anagrams with Fiends!
+            Log in here: 
+            <%= link_to 'Log In', log_in_path %>
+            <%= link_to 'Register', sign_up_path %>
+        <% end %>
+    </div>
 
 <%= yield %>
 
