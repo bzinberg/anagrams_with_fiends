@@ -8,16 +8,20 @@ class TablesController < ApplicationController
   def show_my_table
     if @table.nil?
       redirect_to root_url
+      return
     end
     render 'show'
   end
   
   def index
+    puts "HELLO!!!"
     respond_to do |format|
       if current_user.table.nil?
-        @table = Table.new
+        @table = Table.create
         current_user.table = @table
         current_user.save
+        # just in case?
+        @table.save
         puts 'new table ' + @table.uuid
       else 
         @table = current_user.table
