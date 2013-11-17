@@ -17,5 +17,6 @@ WebsocketRails::EventMap.describe do
   namespace :table do
       subscribe :state_request, to: GameEventController, with_method: :state_request
       subscribe :flip_tile_request, to: GameEventController, with_method: :flip_tile_request
+      subscribe :build_request, to: GameEventController, with_method: :build_request
   end
 end

@@ -30,6 +30,16 @@ window.initTable = () ->
             console.log "tile flip requested!" + window.next_turn_number
             dispatcher.trigger 'table.flip_tile_request', window.next_turn_number
 
+        $('#word_entry').on 'keypress', (event, abc) ->
+            if(event.which == 13)
+                alert('submitting...')
+                # TODO fix redundant $('#word_entry')
+                dispatcher.trigger 'table.build_request', $('#word_entry').val()
+
+        dispatcher.bind 'game_info.next_turn_number', (response) ->
+            alert('Receiving next turn number')
+            window.next_turn_number = response
+
         dispatcher.bind 'game_event.new_state', (response) ->
             alert('new move!')
             $('#gamelog').append($('<div/>').html(response))
@@ -66,11 +76,11 @@ window.initTable = () ->
             appendLetter($poolDiv, letter)
         )
 
-    updateSingleStash = (stashName) ->
+    updateSingleStash = (state, stashName) ->
         $stashDiv = findStashDivByName(stashName)
         $stashDiv.html('')
 
-        gameState.stashes[stashName].forEach((entry) ->
+        state.stashes[stashName].forEach((entry) ->
             $wordDiv = $("<div>").attr('turnNumber', entry[0])
             entry[1].split('').forEach((letter) ->
                 appendLetter($stashDiv, letter)
@@ -80,7 +90,8 @@ window.initTable = () ->
 
     updateStashes = (state) ->
         console.log("updating stashes")
-        updateSingleStash(name) for name, words of state.stashes
+        alert('Updating stashes,' + state.stashes['ben'])
+        updateSingleStash(state, name) for name, words of state.stashes
 
     findStashDivByName = (name) ->
         return $("#stashDiv")
