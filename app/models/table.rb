@@ -146,7 +146,7 @@ class Table < ActiveRecord::Base
         # TODO logic to check whether the change is not trivial (e.g.  no
         # change, or a simple pluralization) (or maybe this should go in the
         # validation?
-        true # FIXME
+        !need_from_pool.blank? # FIXME
       )
         @valid = false
         return false
