@@ -1,5 +1,5 @@
 class Table < ActiveRecord::Base
-  INITIAL_BAG_LETTERS = 'aaabbbcccddd'
+  INITIAL_BAG_LETTERS = 'jjkkqqxxzzbbbcccfffhhhmmmpppvvvwwwyyygggglllllddddddssssssuuuuuunnnnnnnntttttttttrrrrrrrrroooooooooooiiiiiiiiiiiiaaaaaaaaaaaaaeeeeeeeeeeeeeeeeee'
   has_many :fiends, class_name: 'User', inverse_of: :table
   has_many :turns, inverse_of: :table
 
