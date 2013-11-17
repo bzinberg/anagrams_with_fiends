@@ -6,23 +6,29 @@ class GameEventController < WebsocketRails::BaseController
 
   def client_connected
     puts 'client connected'
-    send_message :connect, @table.current_state
+    send_message :connect
   end
 
   def client_disconnected
     puts 'client disconnected'
   end
+
+  def state_request
+      put 'state requested'
+      broadcast_message :new_state, @table.to_h, namespace: :game_event
+  end
   
   def flip_tile_request
     puts 'tile flip requested'
-    puts @table
-    puts @table.to_h
+    puts 'current_user.table: ' + current_user.table.uuid
+    puts '@table: ' + @table.uuid
     if current_user.request_flip!
       puts 'tile flip succeeded'
-      broadcast_message :new_move, @table.to_h, namespace: :game_event
+      broadcast_message :new_state, current_user.table.to_h, namespace: :game_event
     else
       puts 'tile flip failed'
     end
+    puts 'flip_tile_request done'
   end
 
   def build_request
