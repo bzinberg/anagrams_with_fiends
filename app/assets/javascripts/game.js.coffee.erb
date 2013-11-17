@@ -10,15 +10,15 @@
 #        'aaa': [[3, 'lkhoel'], [1, 'guacamoleeeee'], [2, 'heloe']]
 #    }
 
+TILE_IMAGES = {
+<% 'abcdefghijklmnopqrstuvwxyz'.each_char do |c| %>
+  <%= c %>: '<%= asset_path "tiles/#{c}.png" %>'
+<% end %>
+}
+
 window.initTable = () ->
     gameState = {}
     window.next_turn_number = 15
-
-    window.tile_images = {
-    <% 'abcdefghijklmnopqrstuvwxyz'.each_char do |c| %>
-      <%= c %>: '<%= asset_path "tiles/#{c}.png" %>'
-    <% end %>
-    }
 
     initSocket = () ->
         # alert('socket init')
@@ -66,7 +66,7 @@ window.initTable = () ->
         $bagBox.html(state.bag_size)
 
     appendLetter = ($elt, letter) ->
-        $elt.append('<img src="' + window.tile_images[letter] + '" width="40" height="40" hspace="1">')
+        $elt.append('<img src="' + TILE_IMAGES[letter] + '" width="40" height="40" hspace="1">')
 
     updatePool = (state) ->
         console.log("updating pool")
