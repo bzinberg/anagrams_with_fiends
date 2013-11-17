@@ -13,20 +13,21 @@ class User < ActiveRecord::Base
     # (Apparently we do; also, if table.fiends has already been loaded to
     # memory, we may have to run table.fiends.reload)
     save
-    table.register_flip_requests
+    return table.register_flip_requests
   end
 
   def submit_build(word)
     build = Build.new(doer: self, word: word, table: table)
     puts "Upon submit: #{word}, #{build.word}"
-    table.process_submitted_buildmorph(build)
+    return table.process_submitted_buildmorph(build)
   end
 
   def submit_morph(changed_turn, word)
     puts "Classes: changed_turn #{changed_turn.class}"
+    puts "Word: #{word}; Table: #{table.id}"
     morph = Morph.new(doer: self, changed_turn: changed_turn, word: word, table: table)
     puts "Oh btw, I'm trying to submit a morph of #{changed_turn.word} into #{word}"
-    table.process_submitted_buildmorph(morph)
+    return table.process_submitted_buildmorph(morph)
   end
 
   # Find all matches and partial matches of the username

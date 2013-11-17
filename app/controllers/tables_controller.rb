@@ -1,26 +1,35 @@
 class TablesController < ApplicationController
+  require 'json'
   before_action :ensure_signed_in
-  before_action :set_table
+  before_action :set_table, except: [:index]
   # before_action :ensure_user_belongs_to_table
 
 
   def show_my_table
     if @table.nil?
       redirect_to root_url
+      return
     end
     render 'show'
   end
   
   def index
+    puts "HELLO!!!"
     respond_to do |format|
       if current_user.table.nil?
-        @table = Table.new
+        @table = Table.create
         current_user.table = @table
         current_user.save
+        # just in case?
+        @table.save
+        puts 'new table ' + @table.uuid
       else 
         @table = current_user.table
+        puts 'old table ' + @table.uuid
       end
-      format.html{render "index"}
+      # format.html{render "index"}
+      puts JSON.pretty_generate(@table.to_h)
+      format.js {render "index"}
     end
   end
   def flip
@@ -38,6 +47,7 @@ class TablesController < ApplicationController
     end
 
     def set_table
+      puts 'set table!'
       @table = current_user.table
     end
 

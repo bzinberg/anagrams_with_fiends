@@ -1,4 +1,4 @@
-state = @table.current_state
+# TODO this code isn't used anymore; delete it if necessary
 # TODO This info is sufficient for the MVP, where each table has only one
 # fiend.
 json.next_turn_number @table.next_turn_number

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131116201256) do
+ActiveRecord::Schema.define(version: 20131117104356) do
 
   create_table "games", force: true do |t|
     t.datetime "created_at"
@@ -28,7 +28,10 @@ ActiveRecord::Schema.define(version: 20131116201256) do
     t.boolean  "game_over"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "uuid"
   end
+
+  add_index "tables", ["uuid"], name: "index_tables_on_uuid", unique: true
 
   create_table "turns", force: true do |t|
     t.string   "type"
