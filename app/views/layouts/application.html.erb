@@ -7,15 +7,15 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+  <center>
     <div id="header">
+        <img src = "assets/green-fiend-clipart.png" width = 150px> 
+        <img src="assets/purple-fiend-clipart.png" width=150px/><br>
         <% if signed_in? %>
-            Welcome to Anagrams with Fiends! You are logged in.
-            <%= link_to 'Log Out', log_out_path %>
+        </center><font size="2px" align="right"> <%= link_to 'Log Out', log_out_path %></font><br><center>
+            Welcome to Anagrams with Fiends! <br>You are logged in.<br>
         <% else %>
             Welcome to Anagrams with Fiends!
-            Log in here: 
-            <%= link_to 'Log In', log_in_path %>
-            <%= link_to 'Register', sign_up_path %>
         <% end %>
     </div>
 
@@ -24,6 +24,6 @@
 <%=
   debug(params) if Rails.env.development?
 %>
-
+</center>
 </body>
 </html>

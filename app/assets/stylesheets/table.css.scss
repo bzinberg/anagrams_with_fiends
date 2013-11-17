@@ -1,4 +1,9 @@
+@font-face {
+  font-family: droid-sans;
+  src: url('DroidSans.ttf');
+}
 bagDiv {
+	display: inline-block;
 	border-style: groove;
 	border-width: 10px;
 	border-color:#FEC283;
@@ -7,10 +12,13 @@ bagDiv {
 }
 
 poolDiv {
-
+	display: inline-block;
+	min-height: 10px;
+	min-width: 10px;
 }
 
 stashDiv {
+	display: inline-block;
 	border-style: groove;
 	border-width: 10px;
 	border-color:#FEC283;
@@ -20,4 +28,6 @@ stashDiv {
 }
 body {
 	background-color:#99CCFF;
+	font-family: droid-sans;
+	font-size:20px;
 }
