@@ -12,20 +12,23 @@
 
 window.initTable = () ->
     gameState = {}
+    window.next_turn_number = 15
 
     initSocket = () ->
         alert('socket init')
-        turn_number = 0
 
         dispatcher = new WebSocketRails("localhost:3000/websocket")
+
+        # TODO remove
+        window.dispatcher = dispatcher
 
         dispatcher.on_open = (data) ->
             alert "Connection established: " + JSON.stringify(data)
             dispatcher.trigger 'table.state_request'
 
         $('#flip_tile').on 'click', () ->
-            console.log "tile flip requested!"
-            dispatcher.trigger 'table.flip_tile_request'
+            console.log "tile flip requested!" + window.next_turn_number
+            dispatcher.trigger 'table.flip_tile_request', window.next_turn_number
 
         dispatcher.bind 'game_event.new_state', (response) ->
             alert('new move!')
@@ -36,6 +39,8 @@ window.initTable = () ->
 
     updateAll = (state) ->
         alert('updating all')
+        console.log state.next_turn_number
+        window.next_turn_number = state.next_turn_number
         updateBag(state)
         updatePool(state)
         updateStashes(state)
@@ -87,7 +92,6 @@ window.initTable = () ->
         state.stashes[fiend].sort((pair1, pair2) ->
           return pair1[0] - pair2[0]
         ) for fiend in state.stashes
-        updateAll(gameState)
 
 
     $ -> onready()

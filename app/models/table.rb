@@ -17,6 +17,7 @@ class Table < ActiveRecord::Base
   # so, creates the requested flip.
   def register_flip_requests
     n = next_turn_number
+    fiends.reload
     if fiends.all? {|u| u.flip_request_turn_number == n}
       flip = Flip.new(turn_number: n)
       turns.append(flip)
