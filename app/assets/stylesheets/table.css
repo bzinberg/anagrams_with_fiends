@@ -1,11 +1,23 @@
-#bagDiv {
+bagDiv {
+	border-style: groove;
+	border-width: 10px;
+	border-color:#FEC283;
+	font-size:30px;
+	background-color:#FFCC99;
+}
+
+poolDiv {
 
 }
 
-#poolDiv {
+stashDiv {
+	border-style: groove;
+	border-width: 10px;
+	border-color:#FEC283;
+	font-size:30px;	
+	background-color:#FFCC99;
 
 }
-
-#stashDiv {
-	
+body {
+	background-color:#99CCFF;
 }
