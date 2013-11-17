@@ -5,3 +5,8 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+ben = User.new(username: 'ben', password_digest: 'ben')
+table = Table.create(initial_bag: 'ollehmynameisben', fiends: [ben])
+
+
