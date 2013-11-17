@@ -1,6 +1,9 @@
 class Table < ActiveRecord::Base
+  INITIAL_BAG_LETTERS = 'aaabbbcccddd'
   has_many :fiends, class_name: 'User', inverse_of: :table
   has_many :turns, inverse_of: :table
+
+  before_create :generate_initial_bag
 
   # One greater than the largest turn number of a turn at this
   # table, or 1 if this table has no turns
@@ -151,5 +154,11 @@ class Table < ActiveRecord::Base
     end
 
   end
+
+  private
+    
+    def generate_initial_bag
+      self.initial_bag = INITIAL_BAG_LETTERS.split('').shuffle.join('')
+    end
 
 end
