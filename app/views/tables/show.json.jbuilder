@@ -7,5 +7,5 @@ stashes_to_send = state.stashes.map do |user,turns|
   [user.username, turns.to_a.map{|turn| [turn.turn_number, turn.word]}] 
 end
 json.stashes Hash[stashes_to_send]
-json.pool state.pool.split('')
+json.pool state.pool
 json.bag_size state.bag.size
