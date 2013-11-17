@@ -1,0 +1,35 @@
+@font-face {
+  font-family: droid-sans;
+  src: url('DroidSans.ttf');
+}
+bagDiv {
+	padding:15px;
+	display: inline-block;
+	border-style: groove;
+	border-width: 10px;
+	border-color:#FEC283;
+	font-size:30px;
+	background-color:#FFCC99;
+}
+
+poolDiv {
+	display: inline-block;
+	min-height: 10px;
+	min-width: 10px;
+}
+
+stashDiv {
+	padding:15px;
+	display: inline-block;
+	border-style: groove;
+	border-width: 10px;
+	border-color:#FEC283;
+	font-size:30px;	
+	background-color:#FFCC99;
+
+}
+body {
+	background-color:#99CCFF;
+	font-family: droid-sans;
+	font-size:20px;
+}

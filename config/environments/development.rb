@@ -29,4 +29,5 @@ BzinbergJiangtydYczLapentabFinal::Application.configure do
 
   # so websocket-rails works
   config.middleware.delete Rack::Lock
+  config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
 end
