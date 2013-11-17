@@ -58,6 +58,7 @@ class GameEventController < WebsocketRails::BaseController
     message[:changed_turn_number] ||= -1
     message[:word] ||= ''
     changed_turn_number = message[:changed_turn_number]
+    @table.turns.reload
     changed_turn = @table.turns.exists?(turn_number: changed_turn_number) ? @table.turns.find_by_turn_number(changed_turn_number) : nil
     word = message[:word]
     puts "morph submitted: #{changed_turn_number}, #{word}"

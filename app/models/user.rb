@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
 
   def submit_morph(changed_turn, word)
     puts "Classes: changed_turn #{changed_turn.class}"
+    puts "Word: #{word}; Table: #{table.id}"
     morph = Morph.new(doer: self, changed_turn: changed_turn, word: word, table: table)
     puts "Oh btw, I'm trying to submit a morph of #{changed_turn.word} into #{word}"
     return table.process_submitted_buildmorph(morph)

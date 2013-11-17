@@ -18,6 +18,7 @@ class Table < ActiveRecord::Base
   def register_flip_requests
     n = next_turn_number
     fiends.reload
+    turns.reload
     if fiends.all? {|u| u.flip_request_turn_number == n}
       flip = Flip.new(turn_number: n)
       turns.append(flip)
@@ -40,6 +41,7 @@ class Table < ActiveRecord::Base
   end
 
   def process_submitted_buildmorph(turn)
+    turns.reload
     # For builds and morphs, unlike flips, we assume a player wouldn't want to
     # "take back" his attempted move based on new developments in the game.
     # Also, we don't want users to be able to screw up the game by submitting a
