@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
   belongs_to :table, inverse_of: :fiends
+  has_secure_password
+  validates :username, presence: true, uniqueness: true
   has_many :turns
 
   # Have self request a flip at the next turn number, and have self.table check
@@ -26,5 +28,12 @@ class User < ActiveRecord::Base
     puts "Oh btw, I'm trying to submit a morph of #{changed_turn.word} into #{word}"
     table.process_submitted_buildmorph(morph)
   end
-
+  has_secure_password
+  validates :username, presence: true, uniqueness: true
+  belongs_to :table
+  has_many :turns
+  # Find all matches and partial matches of the username
+  def self.search username
+	   User.where("username like ?","%"+username.to_s+"%");
+  end
 end

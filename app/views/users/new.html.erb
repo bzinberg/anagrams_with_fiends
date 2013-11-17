@@ -1,0 +1,48 @@
+
+
+<%= form_for @user do |f| %>
+  
+
+  <div class="form-signup">
+    <h2 class="form-signup-heading">Please sign up</h2>
+
+    <p>
+      <%= f.text_field :username, :class=>'form-control', :placeholder => "Username" %>
+    </p>
+
+    <p>
+      <%= f.password_field :password, :class=>'form-control', :placeholder => "Password" %>
+    </p>
+
+    <p>
+      <%= f.password_field :password_confirmation, :class=>'form-control', :placeholder => "Retype Password" %>
+    </p>
+
+    <p>
+      <%= f.submit "Register", :class => "btn btn-lg btn-primary btn-block" %>
+    </p>
+
+    <p>
+      <%= link_to "Already a member?", log_in_path %> 
+    </p>
+
+    <!-- This prints out any error messages in red font color if user types in an invalid username or password -->    
+    <% if @user.errors.any? %>
+      <% for message in @user.errors.full_messages %>
+        <li class="error_message"><%= message %></li>
+      <% end %>
+    <% end %>
+
+  </div>
+
+<% end %>
+
+ 
+
+
+
+
+
+
+
+
