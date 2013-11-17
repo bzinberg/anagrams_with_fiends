@@ -8,14 +8,18 @@
 </head>
 <body>
   <center>
+    <% if signed_in? %>
+        </center><div align="right"><font size="2px" align="right"> <%= link_to 'Log Out', log_out_path %></font></div><br><center>
+    <% end %>
     <div id="header">
         <img src = "assets/green-fiend-clipart.png" width = 150px> 
         <img src="assets/purple-fiend-clipart.png" width=150px/><br>
         <% if signed_in? %>
-        </center><font size="2px" align="right"> <%= link_to 'Log Out', log_out_path %></font><br><center>
             Welcome to Anagrams with Fiends! <br>You are logged in.<br>
         <% else %>
-            Welcome to Anagrams with Fiends!
+            Welcome to Anagrams with Fiends!<br>
+            <%= link_to 'Log In', log_in_path %> <br>
+            <%= link_to 'Register', sign_up_path %><br>
         <% end %>
     </div>
 
