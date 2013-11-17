@@ -43,6 +43,9 @@ gem 'bcrypt-ruby', '~> 3.0.1'
 # websockets support
 gem 'websocket-rails'
 
+# jquery-turbolinks
+gem 'jquery-turbolinks'
+
 # Use unicorn as the app server
 # gem 'unicorn'
 
