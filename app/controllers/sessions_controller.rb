@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
   def new
     # redirect to index if the user is already logged in
-    if !session[:user_id].nil?
+    if signed_in?
       redirect_to root_path
     end
   end
