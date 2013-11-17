@@ -11,7 +11,7 @@
 #    }
 
 TILE_IMAGES = {
-<% 'abcdefghijklmnopqrstuvwxyz'.each_char do |c| %>
+<% ('a'..'z').each do |c| %>
   <%= c %>: '<%= asset_path "tiles/#{c}.png" %>'
 <% end %>
 }
@@ -21,15 +21,12 @@ window.initTable = () ->
     window.next_turn_number = 15
 
     initSocket = () ->
-        # alert('socket init')
-
         dispatcher = new WebSocketRails("localhost:3000/websocket")
 
         # TODO remove
         window.dispatcher = dispatcher
 
         dispatcher.on_open = (data) ->
-            # alert "Connection established: " + JSON.stringify(data)
             dispatcher.trigger 'table.state_request'
 
         $('#flip_tile').on 'click', () ->
@@ -53,7 +50,6 @@ window.initTable = () ->
             #$('#gamelog').append($('<div/>').html(response.message))
 
     updateAll = (state) ->
-        # alert('updating all')
         console.log state.next_turn_number
         window.next_turn_number = state.next_turn_number
         updateBag(state)
@@ -105,8 +101,6 @@ window.initTable = () ->
           word: $('#word_entry').val()
         }
 
-
-
     updateStashes = (state) ->
         console.log("updating stashes")
         # alert('Updating stashes,' + state.stashes['ben'])
@@ -117,12 +111,9 @@ window.initTable = () ->
         return $("#stashDiv")
 
     onready = () ->
-        # alert('onready')
         initSocket()
-        # alert('after initSocket()\n' + JSON.stringify(null))
         state.stashes[fiend].sort((pair1, pair2) ->
           return pair1[0] - pair2[0]
         ) for fiend in state.stashes
-
 
     $ -> onready()

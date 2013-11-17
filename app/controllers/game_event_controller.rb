@@ -1,6 +1,4 @@
 class GameEventController < WebsocketRails::BaseController
-  before_action :set_table
-
   def initialize_session
     # run when a socket is set up
     puts 'session initialized'
@@ -69,9 +67,4 @@ class GameEventController < WebsocketRails::BaseController
       puts 'Failed morph request'
     end
   end
-
-  private
-    def set_table
-      @table = current_user.table
-    end
 end
