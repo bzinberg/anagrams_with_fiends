@@ -8,19 +8,23 @@ $ ->
     dispatcher.on_open = (data) ->
         console.log "Connection established: #{data}"
 
-    sendchatsuccess = (message) ->
-            console.log('received' + message)
-            $('#log').append($('<div/>').html(message['message']))
+    sendchatsuccess = (response) ->
+        console.log('received ' + response)
+        $('#gamelog').append($('<div/>').html(response.message))
 
-    sendchatfailure = (message) ->
-            console.log('failure!' + message)
+    sendchatfailure = (response) ->
+        console.log('failure! ' + response)
 
     $('#send_chat').on 'click', () ->
         console.log "send!"
-        dispatcher.trigger 'chat_sent', $('#sendbox').val(), sendchatsuccess, sendchatfailure
+        message = {val: $('#sendbox').val()}
+        dispatcher.trigger 'chat_sent', message
 
         $('#sendbox').val('')
 
-    dispatcher.bind 'chats.server_msg', (message) ->
-        console.log(message)
-        $('#log').append($('<div/>').html(message))
+    dispatcher.bind 'server_msg', (response) ->
+        $('#gamelog').append($('<div/>').html(response.message))
+
+        #console.log(response)
+        #$('#gamelog').append($('<div/>').html(response.message))
+

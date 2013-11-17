@@ -6,16 +6,19 @@ class ChatController < WebsocketRails::BaseController
 
   def client_connected
       puts 'client connected'
-      send_message :server_msg, {message: 'Client Connected'}
+      m = {message: 'Client Connected'}
+      send_message :server_msg, m
   end
 
   def client_disconnected
       puts 'client disconnected'
-      send_message :server_msg, {message: 'Client Disconnected'}
+      m = {message: 'Client Disconnected'}
+      send_message :server_msg, m
   end
   
   def chat_sent
       puts 'client message sent'
-      send_message :server_msg, {message: 'chat sent'}
+      m = {message: message[:val]}
+      send_message :server_msg, m
   end
 end

@@ -1,6 +1,7 @@
 BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
   resources :games
   resources :users
+  resources :tables
   resources :sessions, :except => [:new]
   root :to => 'home#index'
   get "sessions/new"
