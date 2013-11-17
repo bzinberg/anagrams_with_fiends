@@ -1,6 +1,4 @@
-BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
-  resources :games
-  resources :users
+BzinbergJiangtydYczLapentabFinal::Application.routes.draw do  resources :users
   resources :tables
   get '/mytable', to: 'tables#show_my_table'
   resources :sessions, :except => [:new]

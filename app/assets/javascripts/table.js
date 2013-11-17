@@ -1,4 +1,4 @@
-var state = {
+/*var state = {
 	bag_size: 3,
 	pool: "abcdef",
 	stashes: {
@@ -64,4 +64,5 @@ var findStashDivByName = function(name) {
 	return $("#stashDiv");
 };
 
-onready();
+*/
+// onready();

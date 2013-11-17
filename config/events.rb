@@ -12,7 +12,9 @@ WebsocketRails::EventMap.describe do
   #   end
   # The above will handle an event triggered on the client like `product.new`.
 
-  subscribe :client_connected, to: ChatController, with_method: :client_connected
-  subscribe :chat_sent, to: ChatController, with_method: :chat_sent
-  subscribe :client_disconnected, to: ChatController, with_method: :client_disconnected
+  subscribe :client_connected, to: GameEventController, with_method: :client_connected
+  subscribe :client_disconnected, to: GameEventController, with_method: :client_disconnected
+  namespace :table do
+      subscribe :flip_tile_request, to: GameEventController, with_method: :flip_tile_request
+  end
 end

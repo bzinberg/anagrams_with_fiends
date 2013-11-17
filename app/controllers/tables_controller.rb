@@ -38,6 +38,7 @@ class TablesController < ApplicationController
     end
 
     def set_table
+        puts 'set table!'
       @table = current_user.table
     end
 
