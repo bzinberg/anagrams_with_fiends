@@ -2,11 +2,16 @@ var state = {
 	bag_size: 3,
 	pool: "abcdef",
 	stashes: {
-		'leon': [[0, 'loel'], [1, 'guacamole']]
+		'leon': [[3, 'loel'], [1, 'guacamolee'], [2, 'heloe']]
 	}
 };
 
 var onready = function() {
+  for(var fiend in state.stashes) {
+    state.stashes[fiend].sort(function(pair1, pair2) {
+      return pair1[0] - pair2[0]
+    });
+  }
 	updateAll(state);
 };
 

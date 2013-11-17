@@ -1,7 +1,7 @@
 BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
   resources :games
   resources :users
-  # resources :tables
+  resources :tables
   get '/mytable', to: 'tables#show_my_table'
   resources :sessions, :except => [:new]
   root :to => 'home#index'
