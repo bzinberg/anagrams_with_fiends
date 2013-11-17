@@ -14,5 +14,10 @@ class TablesController < ApplicationController
 		format.html{render "index"}
 	end
   end
+  def flip
+  	respond_to do |format|
+  		format.js{}
+  	end
+  end
 
 end
