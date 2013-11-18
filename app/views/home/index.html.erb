@@ -3,8 +3,8 @@
    </center><div align="right"><font size="2px" align="right"> <%= link_to 'Log Out', log_out_path %></font></div><br><center>
     <% end %>
     <div id="header">
-        <img src = "assets/green-fiend-clipart.png" width = 150px> 
-        <img src="assets/purple-fiend-clipart.png" width=150px/><br>
+      <img src="<%= asset_path 'green-fiend-clipart.png' %>" width = 150px> 
+        <img src="<%= asset_path 'purple-fiend-clipart.png' %>" width=150px/><br>
         <% if signed_in? %>
             Welcome to Anagrams with Fiends! <br>You are logged in.<br>
            <%= link_to 'Start Game', show_table_path %>
