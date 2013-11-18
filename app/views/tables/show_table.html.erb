@@ -6,6 +6,10 @@
     });
   <% end %>
 <% end %>
+<div id="nav_links">
+  <%= link_to 'Log out', log_out_path %><br>
+  <%= link_to 'New game', force_new_table_path %>
+</div>
 <br><br><center><bagDiv>Tiles left in bag: <span id="bagBox"></span></bagDiv><br><br>
 <bagDiv id="score"></bagDiv><br>
 <br><bagDiv>Pool</bagDiv><br><poolDiv id="poolDiv"></poolDiv><br><br>

@@ -13,6 +13,12 @@ class TablesController < ApplicationController
     #render 'show'
   #end
   
+  def force_new_table
+    current_user.table = nil
+    current_user.save
+    redirect_to show_table_path
+  end
+  
   def show_table
     respond_to do |format|
       if current_user.table.nil?

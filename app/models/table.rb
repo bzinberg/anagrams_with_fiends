@@ -220,7 +220,9 @@ class Table < ActiveRecord::Base
 
     def generate_initial_bag
         puts 'generating bag'
-      self.initial_bag = INITIAL_BAG_LETTERS.split('').shuffle.join('')
+      # TODO Uncomment
+        # self.initial_bag = INITIAL_BAG_LETTERS.split('').shuffle.join('')
+        self.initial_bag = 'omlesailragacufecaiwfvcornjugbexralstakzlflveetdtidayqegamisatehhouoeecilunx'
     end
 
 end

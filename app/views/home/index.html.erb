@@ -7,7 +7,12 @@
         <img src="<%= asset_path 'purple-fiend-clipart.png' %>" width=150px/><br>
         <% if signed_in? %>
             Welcome to Anagrams with Fiends! <br>You are logged in.<br>
-           <%= link_to 'Start Game', show_table_path %>
+            <% if current_user.table.nil? %>
+             <%= link_to 'Start Table', show_table_path %>
+           <% else %>
+             <%= link_to 'Return to your previous table', show_table_path %><br>
+             <%= link_to 'Discard previous table and start anew', force_new_table_path, confirm: 'Are you sure?' %>
+           <% end %>
         <% else %>
             Welcome to Anagrams with Fiends!<br>
             <%= link_to 'Log In', log_in_path %> <br>
