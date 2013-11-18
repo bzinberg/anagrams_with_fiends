@@ -71,7 +71,8 @@ window.initTable = () ->
         $score.html("Score = " + state.score)
 
     appendLetter = ($elt, letter) ->
-        $elt.append('<img src="' + TILE_IMAGES[letter] + '" width="40" height="40" hspace="1">')
+        $tile = $('<img src="' + TILE_IMAGES[letter] + '" hspace="1">').addClass('tile')
+        $elt.append($tile)
 
     updatePool = (state) ->
         console.log("updating pool")

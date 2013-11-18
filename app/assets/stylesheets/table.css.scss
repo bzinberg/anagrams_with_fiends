@@ -2,6 +2,7 @@
   font-family: droid-sans;
   src: url('DroidSans.ttf');
 }
+
 bagDiv {
 	padding:15px;
 	display: inline-block;
@@ -42,4 +43,19 @@ body {
 
 .hasBorder {
 	background-color: white;
+}
+
+button {
+	display: inline-block;
+	border-style: groove;
+	border-width: 5px;
+	border-color:#FEC283;
+	font-size:15px;
+	background-color:#FFCC99;
+	border-radius:7px;
+}
+
+.tile {
+	width:40px;
+	height:40px;
 }
