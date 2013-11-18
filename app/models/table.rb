@@ -7,6 +7,10 @@ class Table < ActiveRecord::Base
 
   before_create :init_table
 
+  def self.is_word?(word)
+    BzinbergJiangtydYczLapentabFinal::Application::DICTIONARY.include?(word)
+  end
+
   # One greater than the largest turn number of a turn at this
   # table, or 1 if this table has no turns
   def next_turn_number
@@ -120,35 +124,41 @@ class Table < ActiveRecord::Base
       @bag[0] = ''
     end
 
+    # precondition: word is lowercase
     def register_build(build)
-      puts "Upon register_build: #{build.word}"
+      puts "build word? #{build.word} #{Table::is_word?(build.word)}"
+      word = build.word
+      
       if !(
-        # check whether word is in dictionary (or should this go in the validation?)
-        @pool.contain_anagram_of?(build.word) and true # FIXME
+        @pool.contain_anagram_of?(word) and 
+        Table::is_word?(word)
       )
         @valid = false
         return false
       end
 
       @stashes[build.doer].add(build)
-      build.word.each_char do |c|
+      word.each_char do |c|
+        # use instead of String.charwise_remove because we want to maintain the pool order
         @pool.sub!(c, '')
       end
     end
 
     def register_morph(morph)
+      puts "morph word? #{morph.word} #{Table::is_word?(morph.word)}"
       need_from_pool = morph.word.charwise_remove(morph.changed_turn.word)
       if !(
-        # TODO maybe validation should be done elsewhere
         morph.valid? and
+        # check that new word contains previous word
         need_from_pool and
         # does the word we're trying to change still exist in a stash?
         @stashes[morph.changed_turn.doer].include?(morph.changed_turn) and
         @pool.contain_anagram_of?(need_from_pool) and
         # TODO logic to check whether the change is not trivial (e.g.  no
-        # change, or a simple pluralization) (or maybe this should go in the
-        # validation?
-        !need_from_pool.blank? # FIXME
+        # change, or a simple pluralization) 
+        # Check that new word is not an anagram of previous word
+        !need_from_pool.blank? and
+        Table::is_word?(morph.word)
       )
         @valid = false
         return false

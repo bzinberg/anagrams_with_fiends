@@ -23,10 +23,10 @@ module BzinbergJiangtydYczLapentabFinal
     # Some extra string methods
     require 'ext/string.rb'
 
-    @dictionary = Set.new
+    DICTIONARY = Set.new
     File.open('config/sowpods3.txt') do |file|
       file.each do |line|
-        @dictionary.add(line.strip)
+        DICTIONARY.add(line.strip)
       end
     end
   end
