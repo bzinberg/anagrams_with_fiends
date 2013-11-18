@@ -69,6 +69,7 @@ class Table < ActiveRecord::Base
     #TODO not finished yet
     attr_reader :next_turn_number
     attr_reader :valid
+    attr_reader :score
     def bag
       return String.new(@bag)
     end
@@ -89,6 +90,7 @@ class Table < ActiveRecord::Base
       # We think of the pool as an array of characters
       @pool = ''
       @next_turn_number = 1
+      @score = 0
 
       # If there are errors, we will set this flag to false
       @valid = true
@@ -114,6 +116,8 @@ class Table < ActiveRecord::Base
         @valid = false
         return false
       end
+      # score adjustment
+      @score -= [@pool.length - 2, 0].max
       @pool << @bag[0]
       @bag[0] = ''
     end
@@ -132,6 +136,9 @@ class Table < ActiveRecord::Base
       build.word.each_char do |c|
         @pool.sub!(c, '')
       end
+
+      # score adjustment
+      @score += (build.word.length - 1) * (build.word.length - 2) / 2
     end
 
     def register_morph(morph)
@@ -157,6 +164,9 @@ class Table < ActiveRecord::Base
       need_from_pool.each_char do |c|
         @pool.sub!(c, '')
       end
+
+      # score adjustment
+      @score += (morph.word.length - 1) * (morph.word.length - 2) / 2 - (morph.changed_turn.word.length - 1) * (morph.changed_turn.word.length - 2) / 2
     end
 
   end
@@ -172,6 +182,7 @@ class Table < ActiveRecord::Base
     json['stashes'] =  Hash[stashes_to_send]
     json['pool'] = state.pool
     json['bag_size'] = state.bag.size
+    json['score'] = state.score
     return json
   end
 
