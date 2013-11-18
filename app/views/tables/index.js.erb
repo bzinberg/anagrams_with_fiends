@@ -13,5 +13,5 @@ $("body").html(
     '<div id="gamelog"/></center>',
     ].join('\n'));
 
-    window.initTable();
+    window.initTable("<%= current_user.table.uuid %>");
 });
