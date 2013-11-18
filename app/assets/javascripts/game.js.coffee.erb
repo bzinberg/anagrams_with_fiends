@@ -37,6 +37,7 @@ window.initTable = () ->
             if(event.which == 13)
                 # TODO fix redundant $('#word_entry')
                 dispatcher.trigger 'table.build_request', $('#word_entry').val()
+                $('#word_entry').val('')
 
         dispatcher.bind 'game_info.next_turn_number', (response) ->
             alert('Receiving next turn number')
