@@ -83,16 +83,20 @@ window.initTable = () ->
         $stashDiv.html('')
 
         state.stashes[stashName].forEach((entry) ->
-            $wordDiv = $("<div>").attr('turnNumber', entry[0])
+            $wordDiv = $("<div>").attr('turnNumber', entry[0]).addClass('wordDiv')
             entry[1].split('').forEach((letter) ->
-                appendLetter($stashDiv, letter)
+                appendLetter($wordDiv, letter)
             )
-            $morphButton = $('<button>').text('Morph this').click(() ->
-                # alert('just making sure' + entry[0] + submitMorph)
+            $wordDiv.on 'click', () ->
                 submitMorph(entry[0])
-            )
-            $wordDiv.append($morphButton)
+                $('#word_entry').val('') 
+
+            f1 = () -> $wordDiv.addClass("hasBorder")
+            f2 = () -> $wordDiv.removeClass("hasBorder")
+            $wordDiv.hover( f1, f2 )
             $stashDiv.append($wordDiv)
+            $stashDiv.append("<br>")
+            console.log entry
         )
 
     submitMorph = (changed_turn_number) ->
@@ -103,7 +107,7 @@ window.initTable = () ->
         }
 
     updateStashes = (state) ->
-        console.log("updating stashes")
+        console.log("updating stashesE")
         # alert('Updating stashes,' + state.stashes['ben'])
         updateSingleStash(state, name) for name, words of state.stashes
 
