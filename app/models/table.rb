@@ -148,7 +148,7 @@ class Table < ActiveRecord::Base
       end
 
       # score adjustment
-      @score += (build.word.length - 1) * (build.word.length - 2) / 2
+      @score += (build.word.length - 1) * (build.word.length - 2)
     end
 
     def register_morph(morph)
@@ -178,7 +178,7 @@ class Table < ActiveRecord::Base
       end
 
       # score adjustment
-      @score += (morph.word.length - 1) * (morph.word.length - 2) / 2 - (morph.changed_turn.word.length - 1) * (morph.changed_turn.word.length - 2) / 2
+      @score += (morph.word.length - 1) * (morph.word.length - 2) - (morph.changed_turn.word.length - 1) * (morph.changed_turn.word.length - 2)
     end
 
   end
