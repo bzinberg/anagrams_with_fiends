@@ -1,19 +1,43 @@
 class String
-  def charwise_remove(s)
-    # Create copies so that we don't mutate
-    s = String.new(s)
-    c = String.new(self)
-    while !s.empty?
-      if c.sub!(s[0], '').nil?
-        return false
+  def charwise_remove(str)
+    c = Hash.new(0)
+
+    self.each_char do |char|
+      c[char] += 1
+    end
+
+    str.each_char do |char|
+      if c[char] > 0
+        c[char] -= 1
       else
-        s[0] = ''
+        return nil
       end
     end
-    return c
+
+    ret = ''
+    c.each do |char, count|
+        ret << char*count
+    end
+
+    return ret
   end
 
-  def contain_anagram_of?(s)
-    charwise_remove(s) ? true : false
+  def contain_anagram_of?(str)
+    c = Hash.new(0)
+
+    self.each_char do |char|
+      c[char] += 1
+    end
+
+    str.each_char do |char|
+      if c[char] > 0
+        c[char] -= 1
+      else
+        return false
+      end
+    end
+
+    return true
   end
+
 end

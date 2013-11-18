@@ -51,8 +51,10 @@ class Table < ActiveRecord::Base
 
     # TODO this part is a bit messy
     state = state_before_turn_number(turn.turn_number)
+    # check validity of turn
     if state.register_turn(turn)
       turns.append(turn)
+      # check that save works
       if save
         return true
       else
