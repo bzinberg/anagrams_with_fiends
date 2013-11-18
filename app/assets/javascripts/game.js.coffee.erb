@@ -68,7 +68,7 @@ window.initTable = () ->
     updateScore = (state) ->
         console.log('updating score')
         $score = $('#score')
-        $score.html("Score = " + state.score)
+        $score.html("Score: " + state.score)
 
     appendLetter = ($elt, letter) ->
         $tile = $('<img src="' + TILE_IMAGES[letter] + '" hspace="1">').addClass('tile')
