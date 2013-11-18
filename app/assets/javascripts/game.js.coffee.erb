@@ -21,7 +21,7 @@ window.initTable = () ->
     window.next_turn_number = 15
 
     initSocket = () ->
-        dispatcher = new WebSocketRails("localhost:3000/websocket")
+        dispatcher = new WebSocketRails("serene-dawn-1769.herokuapp.com/websocket")
 
         # TODO remove
         window.dispatcher = dispatcher
