@@ -1,15 +1,15 @@
 $( function() {
 $("body").html(
     [
-    '<div>Tiles left in bag: <span id="bagBox"></span></div>',
-    '<div id="poolDiv"></div>',
-    '<div>Stash:</div>',
-    '<div id="stashDiv"></div>',
+    '<br><br><center><bagDiv>Tiles left in bag: <span id="bagBox"></span></bagDiv><br>',
+    '<br><bagDiv>Pool</bagDiv><br><poolDiv id="poolDiv"></poolDiv><br><br>',
     '<div id="commands">',
-        '<button type="button" id="flip_tile">Flip Tile</button>',
+        '<button type="button" id="flip_tile">Flip Tile</button><br>',
         '<input id="word_entry" type="text" placeholder="Enter Word Here"/>',
     '</div>',
-    '<div id="gamelog"/>',
+    '<br><stashDiv>Stash </stashdiv><br><br>',
+    '<div id="stashDiv"></div>',
+    '<div id="gamelog"/></center>',
     ].join('\n'));
 
     window.initTable();
