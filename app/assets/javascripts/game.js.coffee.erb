@@ -2,14 +2,6 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-state =
-bag_size: 3,
-pool: "abcdefg",
-stashes: {
-        'leon': [[3, 'lfoel'], [1, 'guacamolee'], [2, 'heloe']],
-        'aaa': [[3, 'lkhoel'], [1, 'guacamoleeeee'], [2, 'heloe']]
-    }
-
 TILE_IMAGES = {
 <% ('a'..'z').each do |c| %>
   <%= c %>: '<%= asset_path "tiles/#{c}.png" %>'
@@ -18,7 +10,6 @@ TILE_IMAGES = {
 
 window.initTable = () ->
     gameState = {}
-    window.next_turn_number = 15
 
     initSocket = () ->
         #dispatcher = new WebSocketRails("serene-dawn-1769.herokuapp.com/websocket")
@@ -41,15 +32,15 @@ window.initTable = () ->
                 $('#word_entry').val('')
 
         dispatcher.bind 'game_info.next_turn_number', (response) ->
-            alert('Receiving next turn number')
             window.next_turn_number = response
 
         dispatcher.bind 'game_event.new_state', (response) ->
-            alert('new move!')
-            $('#gamelog').append($('<div/>').html(response))
+            # we may want a game log?
+            #$('#gamelog').append($('<div/>').html(response))
             updateAll(response)
-            #console.log(response)
-            #$('#gamelog').append($('<div/>').html(response.message))
+
+        dispatcher.bind 'game_event.illegal_move', (response) ->
+            alert("Illegal move")
 
     updateAll = (state) ->
         console.log state.next_turn_number
@@ -117,8 +108,7 @@ window.initTable = () ->
         }
 
     updateStashes = (state) ->
-        console.log("updating stashesE")
-        # alert('Updating stashes,' + state.stashes['ben'])
+        console.log("updating stashes")
         updateSingleStash(state, name) for name, words of state.stashes
 
     findStashDivByName = (name) ->
