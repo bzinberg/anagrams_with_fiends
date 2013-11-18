@@ -56,11 +56,19 @@ window.initTable = () ->
         updateBag(state)
         updatePool(state)
         updateStashes(state)
+        updateScore(state)
+        if (state.bag_size == 0) 
+            $('#flip_tile').text("End Game")
 
     updateBag = (state) ->
         console.log("updating bag")
         $bagBox = $('#bagBox')
         $bagBox.html(state.bag_size)
+
+    updateScore = (state) ->
+        console.log('updating score')
+        $score = $('#score')
+        $score.html("Score = " + state.score)
 
     appendLetter = ($elt, letter) ->
         $elt.append('<img src="' + TILE_IMAGES[letter] + '" width="40" height="40" hspace="1">')
