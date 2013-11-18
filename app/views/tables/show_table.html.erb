@@ -1,7 +1,9 @@
 <% content_for :head do %>
-  <%= javascript asset_path('game.js') %>
   <%= javascript_tag do %>
     window.initTable();
+    $(function() {
+      window.show_table_setup();
+    });
   <% end %>
 <% end %>
 <br><br><center><bagDiv>Tiles left in bag: <span id="bagBox"></span></bagDiv><br><br>

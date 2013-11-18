@@ -124,10 +124,11 @@ window.initTable = () ->
         # TODO for multiplayer mode, this will need to be a nontrivial method
         return $("#stashDiv")
 
-    onready = () ->
+    window.show_table_setup = () ->
+    # onready = () ->
         initSocket()
         state.stashes[fiend].sort((pair1, pair2) ->
           return pair1[0] - pair2[0]
         ) for fiend in state.stashes
 
-    $ -> onready()
+    # $ -> onready()
