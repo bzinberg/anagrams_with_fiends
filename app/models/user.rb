@@ -16,12 +16,19 @@ class User < ActiveRecord::Base
     return table.register_flip_requests
   end
 
+  # Have self submit a request to 'build' the given word.  Returns false if the
+  # build request was denied due to illegality.
   def submit_build(word)
     build = Build.new(doer: self, word: word, table: table)
     puts "Upon submit: #{word}, #{build.word}"
     return table.process_submitted_buildmorph(build)
   end
 
+  # Have self submit a request to morph (i.e., 'swipe' or 'upgrade').  The
+  # changed word is that created in changed_turn, and the word to create from
+  # it is word.  Returns false if the morph request was denied due to
+  # illegality.  Pre-condition: changed_turn is a turn that represents a word
+  # that is currently in a player's stash in self.table.
   def submit_morph(changed_turn, word)
     puts "Classes: changed_turn #{changed_turn.class}"
     puts "Word: #{word}; Table: #{table.id}"

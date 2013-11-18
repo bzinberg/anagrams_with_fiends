@@ -7,6 +7,7 @@ class Table < ActiveRecord::Base
 
   before_create :init_table
 
+  # Check word for validity using dictionary lookup
   def self.is_word?(word)
     BzinbergJiangtydYczLapentabFinal::Application::DICTIONARY.include?(word)
   end
@@ -18,7 +19,8 @@ class Table < ActiveRecord::Base
   end
 
   # Checks whether all fiends have requested a flip at the next turn number. If
-  # so, creates the requested flip.
+  # so, creates the requested flip.  Returns true if a flip results, false
+  # otherwise.
   def register_flip_requests
     n = next_turn_number
     fiends.reload
@@ -32,6 +34,8 @@ class Table < ActiveRecord::Base
     end
   end
 
+  # Returns the game state after all (of this table's) turns with turn number
+  # less than n have been accounted for, as an instance of Table::State.
   def state_before_turn_number(n)
     state = State.new(self)
     turns.where(turn_number: (1..n-1)).each do |turn|
@@ -40,10 +44,14 @@ class Table < ActiveRecord::Base
     return state
   end
 
+  # Returns the current game state, as an instance of Table::State.
   def current_state
     state_before_turn_number(next_turn_number)
   end
 
+  # The parameter turn must be a build or morph.  Assigns to turn an
+  # appropriate turn number, and checks whether it would be legal.  If legal,
+  # saves turn to the database and returns true.  Otherwise, returns false.
   def process_submitted_buildmorph(turn)
     turns.reload
     # For builds and morphs, unlike flips, we assume a player wouldn't want to
@@ -53,7 +61,8 @@ class Table < ActiveRecord::Base
     # might as well do:
     turn.turn_number = next_turn_number
 
-    # TODO this part is a bit messy
+    # TODO this part is a bit messy; will need to be changed when implementing
+    # multiplayer
     state = state_before_turn_number(turn.turn_number)
     # check validity of turn
     if state.register_turn(turn)
@@ -71,11 +80,14 @@ class Table < ActiveRecord::Base
     end
   end
 
+  # Represents a game state.  Stores the contents of the bag, pool, players'
+  # stashes, and score (which will only exist in one-player mode).
   class State
-    #TODO not finished yet
     attr_reader :next_turn_number
     attr_reader :valid
     attr_reader :score
+
+    # Copy on read to avoid mutation / rep exposure
     def bag
       return String.new(@bag)
     end
@@ -83,7 +95,7 @@ class Table < ActiveRecord::Base
       return String.new(@pool)
     end
     def stashes
-      # copy to avoid rep exposure
+      # deep copy to avoid rep exposure
       return Hash[@stashes.map {|key,val| [key, Set.new(val)]}]
     end
 
@@ -102,6 +114,8 @@ class Table < ActiveRecord::Base
       @valid = true
     end
 
+    # Register a new turn, i.e., update self to include the given turn.  Sets
+    # @valid to false and returns false if the turn is illegal.
     def register_turn(turn)
       # Because of ruby strangeness, we say "case turn" rather than "case
       # turn.class"
@@ -161,9 +175,8 @@ class Table < ActiveRecord::Base
         # does the word we're trying to change still exist in a stash?
         @stashes[morph.changed_turn.doer].include?(morph.changed_turn) and
         @pool.contain_anagram_of?(need_from_pool) and
-        # TODO logic to check whether the change is not trivial (e.g.  no
-        # change, or a simple pluralization) 
-        # Check that new word is not an anagram of previous word
+        # Check that new word is not an anagram of previous word (i.e., new
+        # word does involve some new letters)
         !need_from_pool.blank? and
         Table::is_word?(morph.word)
       )
