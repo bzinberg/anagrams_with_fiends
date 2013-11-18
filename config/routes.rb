@@ -1,6 +1,7 @@
 BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
   resources :users
-  resources :tables
+  # resources :tables
+  get "table" => "tables#show_table", as: "show_table"
 
   # get '/mytable', to: 'tables#show_my_table'
   resources :sessions, except: [:new]

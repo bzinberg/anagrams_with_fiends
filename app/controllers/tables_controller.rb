@@ -1,20 +1,19 @@
 class TablesController < ApplicationController
   require 'json'
   before_action :ensure_signed_in
-  before_action :set_table, except: [:index]
+  before_action :set_table, except: [:show_table]
   # before_action :ensure_user_belongs_to_table
 
 
-  def show_my_table
-    if @table.nil?
-      redirect_to root_url
-      return
-    end
-    render 'show'
-  end
+  #def show_my_table
+    #if @table.nil?
+      #redirect_to root_url
+      #return
+    #end
+    #render 'show'
+  #end
   
-  def index
-    puts "HELLO!!!"
+  def show_table
     respond_to do |format|
       if current_user.table.nil?
         @table = Table.create
@@ -27,14 +26,15 @@ class TablesController < ApplicationController
         @table = current_user.table
         puts 'old table ' + @table.uuid
       end
-      # format.html{render "index"}
+      format.html{render "show_table"}
       puts JSON.pretty_generate(@table.to_h)
       format.js {render "index"}
     end
   end
+
   def flip
-  	respond_to do |format|
-  		format.js{}
+    respond_to do |format|
+      format.js{}
   	end
   end
 
@@ -42,7 +42,7 @@ class TablesController < ApplicationController
     
     def ensure_signed_in
       if !signed_in?
-        redirect_to root_url, message: "helo"
+        redirect_to root_url, message: "Please sign in first."
       end
     end
 
