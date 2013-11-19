@@ -24,12 +24,15 @@ window.initTable = () ->
         $('#flip_tile').on 'click', () ->
             console.log "tile flip requested!" + window.next_turn_number
             dispatcher.trigger 'table.flip_tile_request', window.next_turn_number
+            $('#word_entry').focus()
+
 
         $('#word_entry').on 'keypress', (event, abc) ->
             if(event.which == 13)
                 # TODO fix redundant $('#word_entry')
                 dispatcher.trigger 'table.build_request', $('#word_entry').val()
                 $('#word_entry').val('')
+                $('#word_entry').focus()
 
         dispatcher.bind 'game_info.next_turn_number', (response) ->
             window.next_turn_number = response
@@ -90,7 +93,8 @@ window.initTable = () ->
             )
             $wordDiv.on 'click', () ->
                 submitMorph(entry[0])
-                $('#word_entry').val('') 
+                $('#word_entry').val('')
+                $('#word_entry').focus()
 
             f1 = () -> $wordDiv.addClass("hasBorder")
             f2 = () -> $wordDiv.removeClass("hasBorder")
