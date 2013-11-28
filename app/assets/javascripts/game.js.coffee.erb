@@ -9,7 +9,7 @@ TILE_IMAGES = {
 }
 
 window.initTable = (table_uuid) ->
-    gameState = {}
+    #gameState = {}
     dispatcher = null
     window.next_turn_number = 1
 
@@ -31,8 +31,7 @@ window.initTable = (table_uuid) ->
             if(event.which == 13)
                 # TODO fix redundant $('#word_entry')
                 dispatcher.trigger 'table.build_request', {"word": $('#word_entry').val()}
-                $('#word_entry').val('')
-                $('#word_entry').focus()
+                $('#word_entry').val('').focus()
 
         channel.bind 'game_info.next_turn_number', (response) ->
             window.next_turn_number = response
@@ -54,6 +53,7 @@ window.initTable = (table_uuid) ->
         updatePool(state)
         updateStashes(state)
         updateScore(state)
+        gameState = state
         if (state.bag_size == 0) 
             $('#flip_tile').text("End Game")
 
@@ -122,8 +122,8 @@ window.initTable = (table_uuid) ->
 
     window.show_table_setup = () ->
         dispatcher = initSocket()
-        state.stashes[fiend].sort((pair1, pair2) ->
-          return pair1[0] - pair2[0]
-        ) for fiend in state.stashes
+        #gameState.stashes[fiend].sort((pair1, pair2) ->
+        #  return pair1[0] - pair2[0]
+        #) for fiend in gameState.stashes
 
     # $ -> onready()

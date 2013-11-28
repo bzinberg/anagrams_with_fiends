@@ -15,7 +15,7 @@ class GameEventController < WebsocketRails::BaseController
 
   def send_channel_msg(ev, msg)
     puts 'sending channel msg'
-    WebsocketRails[@table.uuid].trigger(ev, msg ) #, namespace: :game_event )
+    WebsocketRails[@table.uuid].trigger(ev, msg, namespace: :game_event)
   end
 
   def state_request
@@ -33,10 +33,6 @@ class GameEventController < WebsocketRails::BaseController
       send_channel_msg(:new_state, @table.to_h)
     else
       puts 'tile flip failed (or, not everyone has requested a flip for the next turn)'
-      # TODO Instead of being a public info message, it should be a private state message.
-      # How to have private channel between server and a single client?
-      # WebsocketRails[@table.uuid].trigger( :next_turn_number, @table.next_turn_number, namespace: :game_info
-      #
       # Actually, how can a client even get out of sync?  Unless we have bugs, this is impossible
     end
     puts 'flip_tile_request done'
@@ -47,10 +43,11 @@ class GameEventController < WebsocketRails::BaseController
     @table.fiends.reload
     puts "build submitted: #{message[:word]}"
     if current_user.submit_build(message[:word].to_s)
-      puts 'hmm no issue'
+      puts 'build request succeeded'
       send_channel_msg(:new_state, @table.to_h)
     else
-      puts 'hmm some issue'
+      puts 'build request failed'
+      send_channel_msg(:illegal_move, 'Failed build')
     end
   end
 
@@ -68,6 +65,7 @@ class GameEventController < WebsocketRails::BaseController
       send_channel_msg(:new_state, @table.to_h)
     else
       puts 'Failed morph request'
+      send_channel_msg(:illegal_move, 'Failed morph')
     end
   end
 end
