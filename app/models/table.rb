@@ -94,6 +94,9 @@ class Table < ActiveRecord::Base
     def pool
       return String.new(@pool)
     end
+    def table_uuid
+      return @table_uuid
+    end
     def stashes
       # deep copy to avoid rep exposure
       return Hash[@stashes.map {|key,val| [key, Set.new(val)]}]
@@ -101,6 +104,7 @@ class Table < ActiveRecord::Base
 
     def initialize(table)
       @table = table
+      @table_uuid = table.uuid
       # if an entry is queried that doesn't exist, creates a new Set to fill
       # the entry
       @stashes = Hash.new {|h,key| h[key] = Set.new}
@@ -208,13 +212,19 @@ class Table < ActiveRecord::Base
     json['pool'] = state.pool
     json['bag_size'] = state.bag.size
     json['score'] = state.score
+    json['table_uuid'] = state.table_uuid
     return json
   end
 
   private
     
     def init_table
-      self.uuid = SecureRandom.hex
+      _uuid = SecureRandom.hex
+      while Table.find_by uuid: _uuid
+        _uuid = SecureRandom.hex
+      end
+      self.uuid = _uuid
+
       generate_initial_bag
     end
 

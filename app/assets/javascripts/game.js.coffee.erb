@@ -8,42 +8,43 @@ TILE_IMAGES = {
 <% end %>
 }
 
-window.initTable = () ->
-    gameState = {}
+window.initTable = (table_uuid) ->
+    #gameState = {}
+    dispatcher = null
+    window.next_turn_number = 1
 
     initSocket = () ->
-        #dispatcher = new WebSocketRails("serene-dawn-1769.herokuapp.com/websocket")
         dispatcher = new WebSocketRails(window.document.location.host + "/websocket")
-
-        # TODO remove
-        window.dispatcher = dispatcher
+        channel = dispatcher.subscribe_private(table_uuid)
 
         dispatcher.on_open = (data) ->
             dispatcher.trigger 'table.state_request'
 
         $('#flip_tile').on 'click', () ->
+            # TODO stop using global window.next_turn_number
             console.log "tile flip requested!" + window.next_turn_number
-            dispatcher.trigger 'table.flip_tile_request', window.next_turn_number
+            dispatcher.trigger 'table.flip_tile_request', {"turn_number": window.next_turn_number}
             $('#word_entry').focus()
 
-
         $('#word_entry').on 'keypress', (event, abc) ->
+            # trigger when enter is pressed
             if(event.which == 13)
                 # TODO fix redundant $('#word_entry')
-                dispatcher.trigger 'table.build_request', $('#word_entry').val()
-                $('#word_entry').val('')
-                $('#word_entry').focus()
+                dispatcher.trigger 'table.build_request', {"word": $('#word_entry').val()}
+                $('#word_entry').val('').focus()
 
-        dispatcher.bind 'game_info.next_turn_number', (response) ->
+        channel.bind 'game_info.next_turn_number', (response) ->
             window.next_turn_number = response
 
-        dispatcher.bind 'game_event.new_state', (response) ->
+        channel.bind 'game_event.new_state', (response) ->
             # we may want a game log?
             #$('#gamelog').append($('<div/>').html(response))
             updateAll(response)
 
-        dispatcher.bind 'game_event.illegal_move', (response) ->
+        channel.bind 'game_event.illegal_move', (response) ->
             alert("Illegal move")
+
+        return dispatcher
 
     updateAll = (state) ->
         console.log state.next_turn_number
@@ -52,6 +53,7 @@ window.initTable = () ->
         updatePool(state)
         updateStashes(state)
         updateScore(state)
+        gameState = state
         if (state.bag_size == 0) 
             $('#flip_tile').text("End Game")
 
@@ -105,8 +107,7 @@ window.initTable = () ->
         )
 
     submitMorph = (changed_turn_number) ->
-        # TODO don't use window.dispatcher
-        window.dispatcher.trigger 'table.morph_request', {
+        dispatcher.trigger 'table.morph_request', {
           changed_turn_number: changed_turn_number,
           word: $('#word_entry').val()
         }
@@ -120,10 +121,9 @@ window.initTable = () ->
         return $("#stashDiv")
 
     window.show_table_setup = () ->
-    # onready = () ->
-        initSocket()
-        state.stashes[fiend].sort((pair1, pair2) ->
-          return pair1[0] - pair2[0]
-        ) for fiend in state.stashes
+        dispatcher = initSocket()
+        #gameState.stashes[fiend].sort((pair1, pair2) ->
+        #  return pair1[0] - pair2[0]
+        #) for fiend in gameState.stashes
 
     # $ -> onready()

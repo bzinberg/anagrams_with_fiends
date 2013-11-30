@@ -1,6 +1,6 @@
 <% content_for :head do %>
   <%= javascript_tag do %>
-    window.initTable();
+      window.initTable("<%= current_user.table.uuid %>");
     $(function() {
       window.show_table_setup();
     });
