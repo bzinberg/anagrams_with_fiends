@@ -5,7 +5,7 @@ var lobbyState = {
         ben: 3,
         bethany: 9
     },
-    challenge_to: {damien: false},
+    challenge_to: ["damien", false],
     challenges_from: {leon: 4}
 };
 
@@ -29,12 +29,9 @@ var updateChallenges = function(lobbyState) {
     var users = lobbyState.challenges_from;
     var $form = $('<form>');
     $form.append("Challenges Received <br>")
-    console.log(users)
     for (user in users) {
         // users is a hash username -> ranking
-        console.log(user)
         var ranking = users[user];
-        console.log(ranking)
         var $row = $('<input type="radio" name="challenger" value=' + user + '>')
         $form.append($row).append(user + ': ' + ranking).append($('<br>'));
     };
@@ -42,9 +39,18 @@ var updateChallenges = function(lobbyState) {
     $('#challengesDiv').append($form);
 };
 
+var updateCurrentChallenge = function(lobbyState) {
+    var challenge = lobbyState.challenge_to[0];
+    var $form = $('<form>');
+    $form.append("Challenged:<br>" + challenge+  "<br>")
+    $form.append('<input type="submit" value="Withdraw" style="font-size: 18px;">')
+    $('#currentChallengeDiv').append($form);
+};
+
 var ready = function() {
     updateUsers(lobbyState);
     updateChallenges(lobbyState)
+    updateCurrentChallenge(lobbyState)
     console.log('done updating');
 };
 
