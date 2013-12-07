@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131117104356) do
+ActiveRecord::Schema.define(version: 20131207222013) do
+
+  create_table "challenges", force: true do |t|
+    t.integer  "challenger_id"
+    t.integer  "challengee_id"
+    t.boolean  "accepted"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "tables", force: true do |t|
     t.string   "initial_bag"
@@ -44,6 +52,7 @@ ActiveRecord::Schema.define(version: 20131117104356) do
     t.integer  "flip_request_turn_number"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "last_lobby_poll"
   end
 
 end
