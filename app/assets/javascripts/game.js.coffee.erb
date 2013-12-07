@@ -2,10 +2,20 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+theState = 
+    next_turn_number: 10
+    pool: 'www'
+    bag_size: 130
+    stashes:
+        leon:
+            [[1, 'mol'], [3,'rails'], [11, 'mol'], [13,'rails'], [111, 'mol'], [311,'rails'], [121, 'mol'], [32,'rails'], [541, 'mol'], [36,'rails'], [162, 'mol'], [3234,'rails'], [12345, 'mol'], [32345,'rails'], [116, 'mol'], [361,'rails'], [113463, 'mol'], [311111,'rails']]
+        bethany:
+            [[6, 'guanacsid']]
+
 TILE_IMAGES = {
-<% ('a'..'z').each do |c| %>
-  <%= c %>: '<%= asset_path "tiles/#{c}.png" %>'
-<% end %>
+    <% ('a'..'z').each do |c| %>
+      <%= c %>: '<%= asset_path "tiles/#{c}.png" %>'
+    <% end %>
 }
 
 window.initTable = (table_uuid) ->
@@ -47,14 +57,15 @@ window.initTable = (table_uuid) ->
         return dispatcher
 
     updateAll = (state) ->
-        console.log state.next_turn_number
-        window.next_turn_number = state.next_turn_number
-        updateBag(state)
-        updatePool(state)
-        updateStashes(state)
-        updateScore(state)
-        gameState = state
-        if (state.bag_size == 0) 
+        console.log theState
+        console.log state
+        window.next_turn_number = theState.next_turn_number
+        updateBag(theState)
+        updatePool(theState)
+        updateStashes(theState)
+        updateScore(theState)
+        gametheState = theState
+        if (theState.bag_size == 0) 
             $('#flip_tile').text("End Game")
 
     updateBag = (state) ->
@@ -63,9 +74,13 @@ window.initTable = (table_uuid) ->
         $bagBox.html(state.bag_size)
 
     updateScore = (state) ->
-        console.log('updating score')
-        $score = $('#score')
-        $score.html("Score: " + state.score)
+        $score = $('#scoreDiv')
+        if (Object.keys(state.stashes).length == 1)
+            $score.show()
+            console.log('updating score')
+            $score.html("Score: " + state.score)
+        else
+            $score.hide()
 
     appendLetter = ($elt, letter) ->
         $tile = $('<img src="' + TILE_IMAGES[letter] + '" hspace="1">').addClass('tile')
@@ -85,8 +100,13 @@ window.initTable = (table_uuid) ->
         )
 
     updateSingleStash = (state, stashName) ->
-        $stashDiv = findStashDivByName(stashName)
-        $stashDiv.html('')
+        $myStash = $('<div>').addClass('singleStash')
+        $myTitle = $('<div>').addClass('fancyBox').addClass('stashTitle')
+        $myTitle.html(stashName)
+        $myStash.append($myTitle)
+        $myStash.append($('<br>'))
+
+        $stashDiv = $('#stashDiv')
 
         state.stashes[stashName].forEach((entry) ->
             $wordDiv = $("<div>").attr('turnNumber', entry[0]).addClass('wordDiv')
@@ -101,10 +121,11 @@ window.initTable = (table_uuid) ->
             f1 = () -> $wordDiv.addClass("hasBorder")
             f2 = () -> $wordDiv.removeClass("hasBorder")
             $wordDiv.hover( f1, f2 )
-            $stashDiv.append($wordDiv)
-            $stashDiv.append("<br>")
-            console.log entry
+            $myStash.append($wordDiv)
+            $myStash.append("<br>")
         )
+
+        $stashDiv.append($myStash)
 
     submitMorph = (changed_turn_number) ->
         dispatcher.trigger 'table.morph_request', {

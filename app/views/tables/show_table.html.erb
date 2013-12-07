@@ -7,17 +7,17 @@
   <% end %>
 <% end %>
 <div id="nav_links">
-  <%= link_to 'Log out', log_out_path %><br>
-  <%= link_to 'New game', force_new_table_path %>
+  <%= link_to "Log out", log_out_path %><br>
+  <%= link_to "New game", force_new_table_path %>
 </div>
-<br><br><center><bagDiv>Tiles left in bag: <span id="bagBox"></span></bagDiv><br><br>
-<bagDiv id="score"></bagDiv><br>
-<br><bagDiv>Pool</bagDiv><br><poolDiv id="poolDiv"></poolDiv><br><br>
+<br><br><center><div class="fancyBox">Tiles left in bag: <span id="bagBox"></span></div><br><br>
+<div class="fancyBox" id="scoreDiv"></div><br>
+<br><div class="fancyBox" id="poolTitle">Pool</div><br>
+<div id="poolDiv"></div><br><br>
 <div id="commands">
    <button type="button" id="flip_tile">Flip Tile</button><br>
    <input id="word_entry" type="text" placeholder="Enter Word Here"/>
 </div>
-<br><stashDiv>Stash </stashdiv><br><br>
 <div id="stashDiv"></div>
 <div id="gamelog"/></center>
 

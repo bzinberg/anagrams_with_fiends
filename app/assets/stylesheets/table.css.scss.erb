@@ -3,7 +3,7 @@
   src: url(DroidSans.ttf);
 }
 
-bagDiv {
+.fancyBox {
 	padding:15px;
 	display: inline-block;
 	border-style: groove;
@@ -13,22 +13,26 @@ bagDiv {
 	background-color:#FFCC99;
 }
 
-poolDiv {
+#poolDiv {
 	display: inline-block;
 	min-height: 10px;
 	min-width: 10px;
 }
 
-stashDiv {
-	padding:15px;
+.singleStash {
 	display: inline-block;
-	border-style: groove;
-	border-width: 10px;
-	border-color:#FEC283;
-	font-size:30px;	
-	background-color:#FFCC99;
-
+	min-height: 10px;
+	min-width: 10px;
+	vertical-align: top;
+	padding: 30px;
+	width:auto;
+	border-style:dashed;
+	border-width:5px;
+	height:500px;
+	overflow-x:hidden;
+	overflow-y:scroll
 }
+
 body {
 	background-color:#99CCFF;
 	font-family: droid-sans;
