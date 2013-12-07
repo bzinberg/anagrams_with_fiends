@@ -97,7 +97,7 @@ class Table < ActiveRecord::Base
       return String.new(@pool)
     end
     def table_uuid
-      return String.new(table.uuid)
+      return String.new(@table.uuid)
     end
     def stashes
       # deep copy to avoid rep exposure

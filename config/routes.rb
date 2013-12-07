@@ -1,4 +1,5 @@
 BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
+  get "lobby/status"
   resources :users
   # resources :tables
   get "table" => "tables#show_table", as: "show_table"
