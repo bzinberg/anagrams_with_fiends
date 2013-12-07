@@ -6,7 +6,13 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-ben = User.new(username: 'ben', password_digest: 'ben')
-table = Table.create(initial_bag: 'ollehmynameisben', fiends: [ben])
+ben = User.create(username: 'ben', password: 'ben', password_confirmation: 'ben')
+neb = User.create(username: 'neb', password: 'neb', password_confirmation: 'neb')
+table = Table.create(fiends: [ben, neb])
+table.initial_bag = 'hellomynameisben'
+table.save
 
-
+(1..10).each do |i|
+  ben.request_flip!(i)
+  neb.request_flip!(i)
+end
