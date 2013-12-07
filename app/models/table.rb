@@ -1,7 +1,9 @@
 class Table < ActiveRecord::Base
   require 'securerandom'
 
+  # The Bananagrams letter distribution
   INITIAL_BAG_LETTERS = 'jjkkqqxxzzbbbcccfffhhhmmmpppvvvwwwyyygggglllllddddddssssssuuuuuunnnnnnnntttttttttrrrrrrrrroooooooooooiiiiiiiiiiiiaaaaaaaaaaaaaeeeeeeeeeeeeeeeeee'
+  # Design decision: t.fiends cannot change once Table t has been created
   has_many :fiends, class_name: 'User', inverse_of: :table
   has_many :turns, inverse_of: :table
 
@@ -95,7 +97,7 @@ class Table < ActiveRecord::Base
       return String.new(@pool)
     end
     def table_uuid
-      return @table_uuid
+      return String.new(table.uuid)
     end
     def stashes
       # deep copy to avoid rep exposure
@@ -104,10 +106,13 @@ class Table < ActiveRecord::Base
 
     def initialize(table)
       @table = table
-      @table_uuid = table.uuid
-      # if an entry is queried that doesn't exist, creates a new Set to fill
-      # the entry
-      @stashes = Hash.new {|h,key| h[key] = Set.new}
+      ##  if an entry is queried that doesn't exist, creates a new Set to fill
+      ##  the entry
+      # @stashes = Hash.new {|h,key| h[key] = Set.new}
+      ## Since we do not allow deletion of fiends, we expect the keys in
+      ## @stashes to be precisely @table.fiends
+      @stashes = Hash.new
+      @table.fiends.each {|fiend| @stashes[fiend] = Set.new}
       @bag = String.new(table.initial_bag)
       # We think of the pool as an array of characters
       @pool = ''
@@ -152,6 +157,7 @@ class Table < ActiveRecord::Base
       word = build.word
       
       if !(
+        @table.fiends.include?(build.doer) and
         @pool.contain_anagram_of?(word) and 
         Table::is_word?(word)
       )
@@ -173,6 +179,7 @@ class Table < ActiveRecord::Base
       puts "morph word? #{morph.word} #{Table::is_word?(morph.word)}"
       need_from_pool = morph.word.charwise_remove(morph.changed_turn.word)
       if !(
+        @table.fiends.include?(morph.doer) and
         morph.valid? and
         # check that new word contains previous word
         need_from_pool and
