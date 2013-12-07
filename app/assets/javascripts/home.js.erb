@@ -1,0 +1,51 @@
+
+var lobbyState = {
+    users: {
+        leon: 4,
+        ben: 3,
+        bethany: 9
+    },
+    challenge_to: {damien: false},
+    challenges_from: {leon: 4}
+};
+
+// Update the list of users that can be challenged
+var updateUsers = function(lobbyState) {
+    console.log(lobbyState);
+    var users = lobbyState.users;
+    var $form = $('<form>');
+    $form.append("Online players <br>")
+    for (user in users) {
+        // users is a hash username -> ranking
+        var ranking = users[user];
+        var $row = $('<input type="radio" name="user" value=' + user + '>')
+        $form.append($row).append(user + ': ' + ranking).append($('<br>'));
+    };
+    $form.append('<input type="submit" value="Challenge" style="font-size: 18px;">')
+    $('#formDiv').append($form);
+};
+
+var updateChallenges = function(lobbyState) {
+    var users = lobbyState.challenges_from;
+    var $form = $('<form>');
+    $form.append("Challenges Received <br>")
+    console.log(users)
+    for (user in users) {
+        // users is a hash username -> ranking
+        console.log(user)
+        var ranking = users[user];
+        console.log(ranking)
+        var $row = $('<input type="radio" name="challenger" value=' + user + '>')
+        $form.append($row).append(user + ': ' + ranking).append($('<br>'));
+    };
+    $form.append('<input type="submit" value="Accept" style="font-size: 18px;">')
+    $('#challengesDiv').append($form);
+};
+
+var ready = function() {
+    updateUsers(lobbyState);
+    updateChallenges(lobbyState)
+    console.log('done updating');
+};
+
+$(ready);
