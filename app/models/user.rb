@@ -1,8 +1,26 @@
 class User < ActiveRecord::Base
   belongs_to :table, inverse_of: :fiends
+  has_one :outgoing_challenge, class_name: 'Challenge', foreign_key: 'challenger_id'
+  has_many :incoming_challenges, class_name: 'Challenge', foreign_key: 'challengee_id'
   has_secure_password
   validates :username, presence: true, uniqueness: true
   has_many :turns
+
+  # If a user hasn't polled lobby in more than LOBBY_TIMEOUT seconds, he is
+  # considered to "not be in the lobby."
+  # TODO Change to something reasonable, like 5 or 10
+  LOBBY_TIMEOUT = 100
+
+  # Return the collection of online users
+  def self.online
+    where('last_lobby_poll >= ?', Time.now.to_i - LOBBY_TIMEOUT)
+  end
+
+  def set_challengee(other_user)
+    challenge = Challenge.new(challenger: self, challengee: other_user)
+    self.outgoing_challenge = challenge
+    save
+  end
 
   # Have self request a flip at the next turn number, and have self.table check
   # whether it's time to grant the request (i.e., whether all other users have
