@@ -42,7 +42,7 @@ class Table < ActiveRecord::Base
 
   # If the bag is empty, ends the game.  Otherwise, flips a tile.
   def flip_tile!(n)
-    if turns.where(type: Flip).count >= initial_bag.size
+    if turns.where(type: Flip).count >= self.initial_bag.size
       game_over!
     else
       flip = Flip.new(turn_number: n)
@@ -50,10 +50,30 @@ class Table < ActiveRecord::Base
     end
   end
 
-  # TODO implement
   def game_over!
-    self.winner = User.first
+    winner = determine_winner(current_state)
+    self.winner = winner
+    fiends.delete_all
     save
+  end
+
+  def determine_winner(state)
+    letter_counts = state.stashes.map{|fiend, tt| [tt.inject(0) {|x,t| x + t.word.length}, fiend]}.sort
+    if letter_counts[0][0] != letter_counts[1][0]
+      # Return the fiend with the most letters in her stash
+      return letter_counts.last[1]
+    else
+      # Both users have same number of letters.  Player who made the most
+      # recent move wins.
+      buildmorphs = state.table.turns.where(type: [Build, Morph]).where('turn_number < ?', state.next_turn_number)
+      if buildmorphs.any?
+        return buildmorphs.last.doer
+      else
+        # No builds or morphs have been made.  Winner decided arbitrarily (by
+        # id, in this case).
+        return state.table.fiends.first
+      end
+    end
   end
 
   # Returns the game state after all (of this table's) turns with turn number
