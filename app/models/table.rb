@@ -128,6 +128,7 @@ class Table < ActiveRecord::Base
     attr_reader :next_turn_number
     attr_reader :valid
     attr_reader :score
+    attr_reader :table
 
     # Copy on read to avoid mutation / rep exposure
     def bag
