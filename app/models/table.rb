@@ -6,12 +6,17 @@ class Table < ActiveRecord::Base
   # Design decision: t.fiends cannot change once Table t has been created
   has_many :fiends, class_name: 'User', inverse_of: :table
   has_many :turns, inverse_of: :table
+  belongs_to :winner, class_name: 'User', foreign_key: 'winner_id'
 
   before_create :init_table
 
   # Check word for validity using dictionary lookup
   def self.is_word?(word)
     BzinbergJiangtydYczLapentabFinal::Application::DICTIONARY.include?(word)
+  end
+
+  def game_over?
+    !winner.nil?
   end
 
   # One greater than the largest turn number of a turn at this
@@ -28,12 +33,27 @@ class Table < ActiveRecord::Base
     fiends.reload
     turns.reload
     if fiends.all? {|u| u.flip_request_turn_number == n}
-      flip = Flip.new(turn_number: n)
-      turns.append(flip)
+      flip_tile!(n)
       return true
     else
       return false
     end
+  end
+
+  # If the bag is empty, ends the game.  Otherwise, flips a tile.
+  def flip_tile!(n)
+    if turns.where(type: Flip).count >= initial_bag.size
+      game_over!
+    else
+      flip = Flip.new(turn_number: n)
+      turns.append(flip)
+    end
+  end
+
+  # TODO implement
+  def game_over!
+    self.winner = User.first
+    save
   end
 
   # Returns the game state after all (of this table's) turns with turn number
@@ -210,6 +230,10 @@ class Table < ActiveRecord::Base
   # Generate a hash which can be passed to the client-side as json
   def to_h
     json = {}
+    json['game_over'] = game_over?
+    if game_over?
+      json['winner'] = winner.username
+    end
     json['next_turn_number'] = next_turn_number
     state = current_state
     stashes_to_send = state.stashes.map do |user,turns|
