@@ -6,11 +6,12 @@
 #    next_turn_number: 10
 #    pool: 'www'
 #    bag_size: 130
+#    winner: "Bethany"
 #    stashes:
 #        leon:
 #            [[1, 'mol'], [3,'rails'], [11, 'mol'], [13,'rails'], [111, 'mol'], [311,'rails'], [121, 'mol'], [32,'rails'], [541, 'mol'], [36,'rails'], [162, 'mol'], [3234,'rails'], [12345, 'mol'], [32345,'rails'], [116, 'mol'], [361,'rails'], [113463, 'mol'], [311111,'rails']]
-#        bethany:
-#            [[6, 'guanacsid']]
+ #       bethany:
+ #           [[6, 'guanacsid']]
 
 TILE_IMAGES = {
     <% ('a'..'z').each do |c| %>
@@ -67,6 +68,9 @@ window.initTable = (table_uuid) ->
         updatePool(state)
         updateScore(state)
         updateStashes(state)
+        if state.hasOwnProperty("winner")
+            console.log("in state")
+            game_end(state)
         gamestate = state
         if (state.bag_size == 0) 
             $('#flip_tile').text("End Game")
@@ -151,4 +155,8 @@ window.initTable = (table_uuid) ->
         #  return pair1[0] - pair2[0]
         #) for fiend in gameState.stashes
 
+    game_end = (end_state) ->
+        $("#inPlay").html("")
+        $("#winner").addClass("fancyBox")
+        $("#winner").html("Game Over! <br><br> Winner: " + end_state.winner)
     # $ -> onready()
