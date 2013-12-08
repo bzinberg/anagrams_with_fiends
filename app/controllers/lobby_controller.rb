@@ -10,6 +10,16 @@ class LobbyController < ApplicationController
     end
   end
 
+  def challenge
+    challengee = User.find_by_username(params[:challengee])
+    if challengee:
+      challenge = Challenge.create(challenger: current_user, challengee: challengee)
+      current_user.outgoing_challenge = challenge
+      current_user.save
+    end
+    render :status
+  end
+
   def reject
     if !@challenge.nil?
       @challenge.reject!
