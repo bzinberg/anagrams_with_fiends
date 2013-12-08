@@ -3,7 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 # test state please ignore
-#theState = 
+# theState = 
 #    next_turn_number: 10
 #    pool: 'www'
 #    bag_size: 130
@@ -11,8 +11,8 @@
 #    stashes:
 #        leon:
 #            [[1, 'mol'], [3,'rails'], [11, 'mol'], [13,'rails'], [111, 'mol'], [311,'rails'], [121, 'mol'], [32,'rails'], [541, 'mol'], [36,'rails'], [162, 'mol'], [3234,'rails'], [12345, 'mol'], [32345,'rails'], [116, 'mol'], [361,'rails'], [113463, 'mol'], [311111,'rails']]
- #       bethany:
- #           [[6, 'guanacsid']]
+#        Bethany:
+#            [[6, 'guanacsid']]
 
 # Make a json object {letter -> image of corresponding tile}
 TILE_IMAGES = {
@@ -20,6 +20,10 @@ TILE_IMAGES = {
       <%= c %>: '<%= asset_path "tiles/#{c}.png" %>'
     <% end %>
 }
+
+# Fiend image list
+FIENDS = ['<%= asset_path "green-fiend-clipart.png" %>', '<%= asset_path "purple-fiend-clipart.png" %>']
+console.log 'hello'
 
 # The main display function, which is called when the table is loaded.
 window.initTable = (table_uuid) ->
@@ -68,6 +72,8 @@ window.initTable = (table_uuid) ->
         return dispatcher
 
     updateAll = (state) ->
+        # For testing purposes only
+        # state = theState
         window.next_turn_number = state.next_turn_number
         updateBag(state)
         updatePool(state)
@@ -111,10 +117,11 @@ window.initTable = (table_uuid) ->
             appendLetter($poolDiv, letter)
         )
 
-    updateSingleStash = (state, stashName) ->
+    updateSingleStash = (state, stashName, i) ->
         $myStash = $('<div>').addClass('singleStash')
         $myTitle = $('<div>').addClass('fancyBox').addClass('stashTitle')
-        $myTitle.html(stashName)
+        $myTitle.html(stashName + ' ')
+        $myTitle.append($('<img src="' + FIENDS[i] + '" height="40px">'))
         $myStash.append($myTitle)
         $myStash.append($('<br>'))
 
@@ -148,11 +155,8 @@ window.initTable = (table_uuid) ->
     updateStashes = (state) ->
         console.log("updating stashes")
         $("#stashDiv").html("")
-        updateSingleStash(state, name) for name, words of state.stashes
-
-    findStashDivByName = (name) ->
-        # TODO for multiplayer mode, this will need to be a nontrivial method
-        return $("#stashDiv")
+        for name, i in Object.keys(state.stashes).sort()
+            updateSingleStash(state, name, i)
 
     window.show_table_setup = () ->
         dispatcher = initSocket()
@@ -163,5 +167,7 @@ window.initTable = (table_uuid) ->
     game_end = (end_state) ->
         $("#inPlay").html("")
         $("#winner").addClass("fancyBox")
-        $("#winner").html("Game Over! <br><br> Winner: " + end_state.winner)
+        $("#winner").html("Game Over! <br><br> Winner: " + end_state.winner + '<br><br>')
+        i = Object.keys(end_state.stashes).sort().indexOf(end_state.winner)
+        $("#winner").append('<img src="' + FIENDS[i] + '" height="100px">').after('<br><br>')
     # $ -> onready()
