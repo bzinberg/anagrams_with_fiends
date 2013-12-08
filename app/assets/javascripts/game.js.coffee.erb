@@ -2,6 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+# test state please ignore
 #theState = 
 #    next_turn_number: 10
 #    pool: 'www'
@@ -13,17 +14,19 @@
  #       bethany:
  #           [[6, 'guanacsid']]
 
+# Make a json object {letter -> image of corresponding tile}
 TILE_IMAGES = {
     <% ('a'..'z').each do |c| %>
       <%= c %>: '<%= asset_path "tiles/#{c}.png" %>'
     <% end %>
 }
 
+# The main display function, which is called when the table is loaded.
 window.initTable = (table_uuid) ->
-    #gameState = {}
     dispatcher = null
     window.next_turn_number = 1
 
+    # Called when the server makes the socket connection to the client
     initSocket = () ->
         dispatcher = new WebSocketRails(window.document.location.host + "/websocket")
         channel = dispatcher.subscribe_private(table_uuid)
@@ -31,12 +34,14 @@ window.initTable = (table_uuid) ->
         dispatcher.on_open = (data) ->
             dispatcher.trigger 'table.state_request'
 
+        # Handler for submitting flip requests via the Flip tile button
         $('#flip_tile').on 'click', () ->
             # TODO stop using global window.next_turn_number
             console.log "tile flip requested!" + window.next_turn_number
             dispatcher.trigger 'table.flip_tile_request', {"turn_number": window.next_turn_number}
             $('#word_entry').focus()
 
+        # Handler for submitting 
         $('#word_entry').on 'keypress', (event, abc) ->
             # trigger when enter is pressed
             if(event.which == 13)
