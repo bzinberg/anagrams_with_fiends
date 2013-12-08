@@ -6,24 +6,29 @@
       <img src="<%= asset_path 'green-fiend-clipart.png' %>" width = 150px> 
         <img src="<%= asset_path 'purple-fiend-clipart.png' %>" width=150px/><br>
         <% if signed_in? %>
-            Welcome to Anagrams with Fiends! <br>You are logged in.<br>
-            <% if current_user.table.nil? %>
+          Welcome to Anagrams with Fiends! <br>You are logged in.<br>
+          <% if current_user.table.nil? %>
              <%= link_to 'Start Table', show_table_path %>
-           <% else %>
+          <% else %>
              <%= link_to 'Return to your previous table', show_table_path %><br>
-             <%= link_to 'Discard previous table and start anew', force_new_table_path, confirm: 'Are you sure?' %>
-           <% end %>
-           <br>
-           <div id="formDiv" class= "onlineBox">
-           </div>
-           <div id="challengesDiv" class= "onlineBox">
-           </div>
-           <div id="currentChallengeDiv" class= "onlineBox">
-           </div>
+             <%= link_to 'Discard previous table and start anew', force_new_table_path, confirm: 'Are you sure?' %><br>
+            <%= link_to 'View Leaderboard', leaderboard_path %><br>
+          <% end %>
+          <br>
+          <div id="lobbyDiv">
+            <div id="formDiv" class="fancyBox">
+            </div>
+            <div id="challengesDiv">
+               <div id="currentChallengeDiv" class="fancyBox"></div>
+               <br>
+               <div id="challengersDiv" class="fancyBox"></div>
+            </div>
+          </div>
         <% else %>
             Welcome to Anagrams with Fiends!<br>
             <%= link_to 'Log In', log_in_path %> <br>
             <%= link_to 'Register', sign_up_path %><br>
+            <%= link_to 'View Leaderboard', leaderboard_path %><br>
         <% end %>
     </div>
 </center>
