@@ -12,7 +12,7 @@ class LobbyController < ApplicationController
 
   def challenge
     challengee = User.find_by_username(params[:challengee])
-    if challengee:
+    if challengee
       challenge = Challenge.create(challenger: current_user, challengee: challengee)
       current_user.outgoing_challenge = challenge
       current_user.save
