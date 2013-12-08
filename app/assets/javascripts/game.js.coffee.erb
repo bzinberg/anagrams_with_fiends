@@ -2,15 +2,15 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-theState = 
-    next_turn_number: 10
-    pool: 'www'
-    bag_size: 130
-    stashes:
-        leon:
-            [[1, 'mol'], [3,'rails'], [11, 'mol'], [13,'rails'], [111, 'mol'], [311,'rails'], [121, 'mol'], [32,'rails'], [541, 'mol'], [36,'rails'], [162, 'mol'], [3234,'rails'], [12345, 'mol'], [32345,'rails'], [116, 'mol'], [361,'rails'], [113463, 'mol'], [311111,'rails']]
-        bethany:
-            [[6, 'guanacsid']]
+#theState = 
+#    next_turn_number: 10
+#    pool: 'www'
+#    bag_size: 130
+#    stashes:
+#        leon:
+#            [[1, 'mol'], [3,'rails'], [11, 'mol'], [13,'rails'], [111, 'mol'], [311,'rails'], [121, 'mol'], [32,'rails'], [541, 'mol'], [36,'rails'], [162, 'mol'], [3234,'rails'], [12345, 'mol'], [32345,'rails'], [116, 'mol'], [361,'rails'], [113463, 'mol'], [311111,'rails']]
+#        bethany:
+#            [[6, 'guanacsid']]
 
 TILE_IMAGES = {
     <% ('a'..'z').each do |c| %>
@@ -57,15 +57,13 @@ window.initTable = (table_uuid) ->
         return dispatcher
 
     updateAll = (state) ->
-        console.log theState
-        console.log state
-        window.next_turn_number = theState.next_turn_number
-        updateBag(theState)
-        updatePool(theState)
-        updateStashes(theState)
-        updateScore(theState)
-        gametheState = theState
-        if (theState.bag_size == 0) 
+        window.next_turn_number = state.next_turn_number
+        updateBag(state)
+        updatePool(state)
+        updateScore(state)
+        updateStashes(state)
+        gamestate = state
+        if (state.bag_size == 0) 
             $('#flip_tile').text("End Game")
 
     updateBag = (state) ->
@@ -135,6 +133,7 @@ window.initTable = (table_uuid) ->
 
     updateStashes = (state) ->
         console.log("updating stashes")
+        $("#stashDiv").html("")
         updateSingleStash(state, name) for name, words of state.stashes
 
     findStashDivByName = (name) ->
