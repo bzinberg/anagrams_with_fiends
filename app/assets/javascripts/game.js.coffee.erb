@@ -39,9 +39,14 @@ window.initTable = (table_uuid) ->
         $('#word_entry').on 'keypress', (event, abc) ->
             # trigger when enter is pressed
             if(event.which == 13)
+                if $('#word_entry').val() == ""
+                    console.log "tile flip requested!" + window.next_turn_number
+                    dispatcher.trigger 'table.flip_tile_request', {"turn_number": window.next_turn_number}
+                    $('#word_entry').focus()
                 # TODO fix redundant $('#word_entry')
-                dispatcher.trigger 'table.build_request', {"word": $('#word_entry').val()}
-                $('#word_entry').val('').focus()
+                else
+                    dispatcher.trigger 'table.build_request', {"word": $('#word_entry').val()}
+                    $('#word_entry').val('').focus()
 
         channel.bind 'game_info.next_turn_number', (response) ->
             window.next_turn_number = response
