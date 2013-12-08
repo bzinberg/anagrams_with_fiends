@@ -1,15 +1,22 @@
 class Table < ActiveRecord::Base
   require 'securerandom'
 
+  # The Bananagrams letter distribution
   INITIAL_BAG_LETTERS = 'jjkkqqxxzzbbbcccfffhhhmmmpppvvvwwwyyygggglllllddddddssssssuuuuuunnnnnnnntttttttttrrrrrrrrroooooooooooiiiiiiiiiiiiaaaaaaaaaaaaaeeeeeeeeeeeeeeeeee'
+  # Design decision: t.fiends cannot change once Table t has been created
   has_many :fiends, class_name: 'User', inverse_of: :table
   has_many :turns, inverse_of: :table
+  belongs_to :winner, class_name: 'User', foreign_key: 'winner_id'
 
   before_create :init_table
 
   # Check word for validity using dictionary lookup
   def self.is_word?(word)
     BzinbergJiangtydYczLapentabFinal::Application::DICTIONARY.include?(word)
+  end
+
+  def game_over?
+    !winner.nil?
   end
 
   # One greater than the largest turn number of a turn at this
@@ -26,11 +33,46 @@ class Table < ActiveRecord::Base
     fiends.reload
     turns.reload
     if fiends.all? {|u| u.flip_request_turn_number == n}
-      flip = Flip.new(turn_number: n)
-      turns.append(flip)
+      flip_tile!(n)
       return true
     else
       return false
+    end
+  end
+
+  # If the bag is empty, ends the game.  Otherwise, flips a tile.
+  def flip_tile!(n)
+    if turns.where(type: Flip).count >= self.initial_bag.size
+      game_over!
+    else
+      flip = Flip.new(turn_number: n)
+      turns.append(flip)
+    end
+  end
+
+  def game_over!
+    winner = determine_winner(current_state)
+    self.winner = winner
+    fiends.delete_all
+    save
+  end
+
+  def determine_winner(state)
+    letter_counts = state.stashes.map{|fiend, tt| [tt.inject(0) {|x,t| x + t.word.length}, fiend]}.sort
+    if letter_counts[0][0] != letter_counts[1][0]
+      # Return the fiend with the most letters in her stash
+      return letter_counts.last[1]
+    else
+      # Both users have same number of letters.  Player who made the most
+      # recent move wins.
+      buildmorphs = state.table.turns.where(type: [Build, Morph]).where('turn_number < ?', state.next_turn_number)
+      if buildmorphs.any?
+        return buildmorphs.last.doer
+      else
+        # No builds or morphs have been made.  Winner decided arbitrarily (by
+        # id, in this case).
+        return state.table.fiends.first
+      end
     end
   end
 
@@ -95,7 +137,7 @@ class Table < ActiveRecord::Base
       return String.new(@pool)
     end
     def table_uuid
-      return @table_uuid
+      return String.new(@table.uuid)
     end
     def stashes
       # deep copy to avoid rep exposure
@@ -104,10 +146,13 @@ class Table < ActiveRecord::Base
 
     def initialize(table)
       @table = table
-      @table_uuid = table.uuid
-      # if an entry is queried that doesn't exist, creates a new Set to fill
-      # the entry
-      @stashes = Hash.new {|h,key| h[key] = Set.new}
+      ##  if an entry is queried that doesn't exist, creates a new Set to fill
+      ##  the entry
+      # @stashes = Hash.new {|h,key| h[key] = Set.new}
+      ## Since we do not allow deletion of fiends, we expect the keys in
+      ## @stashes to be precisely @table.fiends
+      @stashes = Hash.new
+      @table.fiends.each {|fiend| @stashes[fiend] = Set.new}
       @bag = String.new(table.initial_bag)
       # We think of the pool as an array of characters
       @pool = ''
@@ -152,6 +197,7 @@ class Table < ActiveRecord::Base
       word = build.word
       
       if !(
+        @table.fiends.include?(build.doer) and
         @pool.contain_anagram_of?(word) and 
         Table::is_word?(word)
       )
@@ -173,6 +219,7 @@ class Table < ActiveRecord::Base
       puts "morph word? #{morph.word} #{Table::is_word?(morph.word)}"
       need_from_pool = morph.word.charwise_remove(morph.changed_turn.word)
       if !(
+        @table.fiends.include?(morph.doer) and
         morph.valid? and
         # check that new word contains previous word
         need_from_pool and
@@ -203,6 +250,10 @@ class Table < ActiveRecord::Base
   # Generate a hash which can be passed to the client-side as json
   def to_h
     json = {}
+    json['game_over'] = game_over?
+    if game_over?
+      json['winner'] = winner.username
+    end
     json['next_turn_number'] = next_turn_number
     state = current_state
     stashes_to_send = state.stashes.map do |user,turns|
