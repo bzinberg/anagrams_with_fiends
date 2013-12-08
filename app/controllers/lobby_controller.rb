@@ -3,21 +3,40 @@ class LobbyController < ApplicationController
   before_action :set_challenge, only: [:accept, :reject]
 
   def status
-    current_user.update_attribute(:last_lobby_poll, Time.now.to_i)
+    if current_user.table.nil?
+      current_user.update_attribute(:last_lobby_poll, Time.now.to_i)
+    else
+      render json: {currently_in_game: true}
+    end
   end
 
   def reject
+    if !@challenge.nil?
+      @challenge.reject!
+    end
+    render :status
+  end
+
+  def accept
+    if !@challenge.nil?
+      table = Table.create(fiends: [current_user, @challenge.challenger])
+      current_user.incoming_challenges.destroy_all
+    end
+    render :status
   end
 
   private
 
     def ensure_logged_in
-      # TODO implement
+      if !signed_in?
+        redirect_to log_in_url
+      end
     end
     
     def set_challenge
       challenger = User.find_by_username(params[:challenger])
-      @challenge = current_user.incoming_challenges.find_by_challenger(challenger)
-      if 
+      if (challenger && challenger.outgoing_challenge && challenger.outgoing_challenge.challengee == current_user)
+        @challenge = challenger.outgoing_challenge
+      end
     end
 end

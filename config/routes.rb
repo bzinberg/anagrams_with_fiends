@@ -1,5 +1,7 @@
 BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
   get "lobby/status"
+  get "lobby/accept"
+  get "lobby/reject"
   resources :users
   # resources :tables
   get "table" => "tables#show_table", as: "show_table"
