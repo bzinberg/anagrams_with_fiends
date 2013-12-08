@@ -3,10 +3,14 @@ class Challenge < ActiveRecord::Base
   belongs_to :challengee, class_name: 'User', foreign_key: 'challengee_id'
 
   def pending?
-    challenge_status.nil?
+    accepted.nil?
   end
 
   def rejected?
-    challenge_status == false
+    accepted == false
+  end
+
+  def reject!
+    accepted = false
   end
 end
