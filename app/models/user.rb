@@ -16,9 +16,23 @@ class User < ActiveRecord::Base
     where('last_lobby_poll >= ?', Time.now.to_i - LOBBY_TIMEOUT)
   end
 
-  # TODO placeholder for actual ranking system
+  require 'saulabs/trueskill'
+  include Saulabs::TrueSkill
+  # for client-facing use
   def rank
-    5
+    return self.rating_mean - 3*self.rating_deviation
+  end
+
+  # DON'T CONFUSE WITH RANK!
+  # Returns a trueskill Rating object
+  def rating
+    return [Rating.new(self.rating_mean, self.rating_deviation)]
+  end
+
+  def rating=(new_rating)
+    self.rating_mean = new_rating.mean
+    self.rating_deviation = new_rating.deviation
+    save
   end
 
   def set_challengee(other_user)
