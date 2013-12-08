@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131207222013) do
+ActiveRecord::Schema.define(version: 20131208195805) do
 
   create_table "challenges", force: true do |t|
     t.integer  "challenger_id"
@@ -23,10 +23,10 @@ ActiveRecord::Schema.define(version: 20131207222013) do
 
   create_table "tables", force: true do |t|
     t.string   "initial_bag"
-    t.boolean  "game_over"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "uuid"
+    t.integer  "winner_id"
   end
 
   add_index "tables", ["uuid"], name: "index_tables_on_uuid", unique: true
