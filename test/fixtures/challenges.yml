@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  challenger_id: 1
+  challengee_id: 1
+  accepted: false
+
+two:
+  challenger_id: 1
+  challengee_id: 1
+  accepted: false
