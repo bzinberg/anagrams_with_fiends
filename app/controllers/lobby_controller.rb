@@ -31,6 +31,7 @@ class LobbyController < ApplicationController
     if !@challenge.nil?
       table = Table.create(fiends: [current_user, @challenge.challenger])
       current_user.incoming_challenges.destroy_all
+      @challenge.challenger.incoming_challenges.destroy_all
     end
     render :status
   end
