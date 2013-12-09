@@ -9,12 +9,11 @@ class User < ActiveRecord::Base
 
   # If a user hasn't polled lobby in more than LOBBY_TIMEOUT seconds, he is
   # considered to "not be in the lobby."
-  # TODO Change to something reasonable, like 5 or 10
-  LOBBY_TIMEOUT = 100
+  LOBBY_TIMEOUT = 20
 
   # Return the collection of online users
   def self.online
-    where('last_lobby_poll >= ?', Time.now.to_i - LOBBY_TIMEOUT)
+    where('last_lobby_poll >= ?', Time.now.to_i - LOBBY_TIMEOUT).where(table: nil)
   end
 
   require 'saulabs/trueskill'
