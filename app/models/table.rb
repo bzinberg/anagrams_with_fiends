@@ -280,13 +280,12 @@ class Table < ActiveRecord::Base
     end
 
     def record_results
-      winner = determine_winner(current_state)
-      self.winner = winner
-
-      puts 'Winner: ' + winner.username
-
       # ranking or leaderboard for 2, 1 players respectively
       if fiends.length == 2
+        winner = determine_winner(current_state)
+        self.winner = winner
+        puts 'Winner: ' + winner.username
+
         puts '2 players: adjust ratings'
         if winner == fiends[0]
           update_rank(fiends[0], fiends[1])
@@ -294,7 +293,11 @@ class Table < ActiveRecord::Base
           update_rank(fiends[1], fiends[0])
         end
       elsif fiends.length == 1
-        update_highscore(fiends[0], current_state.score)
+        winner = fiends[0]
+        self.winner = winner
+        puts 'Winner: ' + winner.username
+
+        fiends[0].update_highscore(current_state.score)
       end
     end
 
@@ -313,12 +316,6 @@ class Table < ActiveRecord::Base
       loser.rating = fiend_ratings[1][0]
 
       puts 'ratings after: ' + [winner.rating, loser.rating].to_s
-    end
-
-    def update_highscore(fiend, newscore)
-      if newscore > fiend.high_score
-        fiend.high_score = newscore
-      end
     end
 
     def generate_initial_bag

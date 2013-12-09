@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
   validates :username, presence: true, uniqueness: true
   has_many :turns
 
+  attr_reader :high_score
+
   # If a user hasn't polled lobby in more than LOBBY_TIMEOUT seconds, he is
   # considered to "not be in the lobby."
   # TODO Change to something reasonable, like 5 or 10
@@ -20,7 +22,15 @@ class User < ActiveRecord::Base
   include Saulabs::TrueSkill
   # for client-facing use
   def rank
-    return self.rating_mean - 3*self.rating_deviation
+    r = self.rating_mean - 3*self.rating_deviation
+    return r >= 0 ? r.round(1) : 0.0
+  end
+
+  def update_highscore(newscore)
+    if self.high_score == nil or newscore > self.high_score
+      self.high_score = newscore
+      save
+    end
   end
 
   # DON'T CONFUSE WITH RANK!
