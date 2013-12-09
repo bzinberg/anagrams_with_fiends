@@ -49,17 +49,19 @@ var updateUsers = function(lobbyState) {
     $online_users_form.html('');
     $online_users_form.append("Online players <br>");
     for (user in online_users) {
-        // users is a hash username -> ranking
-        var ranking = online_users[user];
-        // var $row = $('<input type="radio" name="username" id="username" value=' + user + '>');
-        // $online_users_form.append($row).append(user + ': ' + ranking).append($('<br>'));
-        var $row = $('<div>').html(user + ': ' + ranking + '&nbsp;');
-        var $challenge_button = $('<input type="button" id="Challenge" name="Challenge" style="font-size: 18px;">').val('Challenge').click(function() {
-            $challengee_field.val(user);
-            $('#onlineUsersForm').trigger('submit');
-        });
+        (function(user) {
+            // users is a hash username -> ranking
+            var ranking = online_users[user];
+            // var $row = $('<input type="radio" name="username" id="username" value=' + user + '>');
+            // $online_users_form.append($row).append(user + ': ' + ranking).append($('<br>'));
+            var $row = $('<div>').html(user + ': ' + ranking + '&nbsp;');
+            var $challenge_button = $('<input type="button" id="Challenge" name="Challenge" style="font-size: 18px;">').val('Challenge').click(function() {
+                $challengee_field.val(user);
+                $('#onlineUsersForm').trigger('submit');
+            });
         $row.append($challenge_button);
         $online_users_form.append($row);
+        })(user);
     };
     // $online_users_form.append('<input type="submit" value="Challenge" style="font-size: 18px;">');
 };
@@ -69,24 +71,26 @@ var updateChallenges = function(lobbyState) {
     $incoming_challenges_form.html('');
     $incoming_challenges_form.append("Challenges Received <br>")
     for (user in challengers) {
-        // challengers is a hash username -> ranking
-        var ranking = challengers[user];
-        // var $row = $('<input type="radio" name="username" id="username" value=' + user + '>');
-        // $incoming_challenges_form.append($row).append(user + ': ' + ranking).append($('<br>'));
-        var $row = $('<div>').html(user + ': ' + ranking);
-        var $accept_button = $('<input type="button" id="Accept" name="Accept" style="font-size: 18px;">').val('Accept').click(function() {
-            $challenger_field.val(user);
-            $challenge_status_field.val('Accept');
-            $('#incomingChallengesForm').trigger('submit');
-        });
-        var $reject_button = $('<input type="button" id="Reject" name="Reject" style="font-size: 18px;">').val('Reject').click(function() {
-            $challenger_field.val(user);
-            $challenge_status_field.val('Reject');
-            $('#incomingChallengesForm').trigger('submit');
-        });
-        $row.append($accept_button);
-        $row.append($reject_button);
-        $incoming_challenges_form.append($row);
+        (function(user) {
+            // challengers is a hash username -> ranking
+            var ranking = challengers[user];
+            // var $row = $('<input type="radio" name="username" id="username" value=' + user + '>');
+            // $incoming_challenges_form.append($row).append(user + ': ' + ranking).append($('<br>'));
+            var $row = $('<div>').html(user + ': ' + ranking);
+            var $accept_button = $('<input type="button" id="Accept" name="Accept" style="font-size: 18px;">').val('Accept').click(function() {
+                $challenger_field.val(user);
+                $challenge_status_field.val('Accept');
+                $('#incomingChallengesForm').trigger('submit');
+            });
+            var $reject_button = $('<input type="button" id="Reject" name="Reject" style="font-size: 18px;">').val('Reject').click(function() {
+                $challenger_field.val(user);
+                $challenge_status_field.val('Reject');
+                $('#incomingChallengesForm').trigger('submit');
+            });
+            $row.append($accept_button);
+            $row.append($reject_button);
+            $incoming_challenges_form.append($row);
+        })(user);
     };
     // $incoming_challenges_form.append('<input type="submit" id="Accept" name="Accept" value="Accept" style="font-size: 18px;">');
     // $incoming_challenges_form.append('<input type="submit" id="Reject" name="Reject" value="Reject" style="font-size: 18px;">');
