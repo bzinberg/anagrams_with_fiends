@@ -34,18 +34,19 @@ class TablesController < ApplicationController
   end
 
   def quit_single_player
-    if @table.one_player?
+    if !@table.nil? and @table.one_player?
       @table.remove_all_fiends
     end
     redirect_to root_url
   end
 
   def forfeit
-    if @table.two_player? and !@table.game_over?
+    if !@table.nil? and @table.two_player? and !@table.game_over?
       # using id's because of stale record issues
       other_fiend = @table.fiends.select{|u| u.id != current_user.id}.pop
       @table.winner = other_fiend
       @table.save
+      @table.game_over!
     end
     render :show_table
   end
