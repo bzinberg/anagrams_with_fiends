@@ -1,5 +1,7 @@
 # Authors: All (Damien, Ben, Bethany, Leon)
 
+<% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
+
 # Make a json object {letter -> image of corresponding tile}
 TILE_IMAGES = {
     <% ('a'..'z').each do |c| %>
