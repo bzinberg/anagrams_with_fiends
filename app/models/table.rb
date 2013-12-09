@@ -19,6 +19,14 @@ class Table < ActiveRecord::Base
     !winner.nil?
   end
 
+  def one_player?
+    fiends.count == 1
+  end
+
+  def two_player?
+    fiends.count == 2
+  end
+
   # One greater than the largest turn number of a turn at this
   # table, or 1 if this table has no turns
   def next_turn_number
@@ -50,9 +58,16 @@ class Table < ActiveRecord::Base
     end
   end
 
+  def remove_all_fiends
+    fiends.each do |f|
+      f.table = nil
+      f.save
+    end
+  end
+
   def game_over!
     record_results
-    fiends.delete_all
+    remove_all_fiends
     save
   end
 

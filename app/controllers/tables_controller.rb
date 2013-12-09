@@ -2,22 +2,13 @@ class TablesController < ApplicationController
   require 'json'
   before_action :ensure_logged_in
   before_action :set_table, except: [:show_table]
-  # before_action :ensure_user_belongs_to_table
 
 
-  #def show_my_table
-    #if @table.nil?
-      #redirect_to root_url
-      #return
-    #end
-    #render 'show'
+  #def force_new_table
+    #current_user.table = nil
+    #current_user.save
+    #redirect_to show_table_path
   #end
-  
-  def force_new_table
-    current_user.table = nil
-    current_user.save
-    redirect_to show_table_path
-  end
   
   def show_table
     respond_to do |format|
@@ -44,17 +35,35 @@ class TablesController < ApplicationController
   	end
   end
 
+  def quit_single_player
+    if @table.one_player?
+      @table.remove_all_fiends
+    end
+    redirect_to root_url
+  end
+
+  def forfeit
+    if @table.two_player? and !@table.game_over?
+      # using id's because of stale record issues
+      other_fiend = @table.fiends.select{|u| u.id != current_user.id}.pop
+      @table.winner = other_fiend
+      @table.save
+    end
+    render :show_table
+  end
+
+  def clear_finished_table
+    if @table and @table.game_over?
+      @table.remove_all_fiends
+    end
+    redirect_to root_url
+  end
+
   private
     
     def set_table
       puts 'set table!'
       @table = current_user.table
     end
-
-    #def ensure_user_belongs_to_table
-      #if current_user.table != @table
-        #redirect_to root_url, message: "helo"
-      #end
-    #end
 
 end
