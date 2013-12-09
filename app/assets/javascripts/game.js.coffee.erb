@@ -49,7 +49,8 @@ window.initTable = (table_uuid, cur_username) ->
 
         channel.bind 'game_event.illegal_move', (response) ->
             if cur_username == response.username
-                alert(response.failmsg)
+                alert(response.failmsg
+                )
 
         return dispatcher
     # Use all methods to update the game
