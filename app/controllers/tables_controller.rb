@@ -4,6 +4,7 @@ class TablesController < ApplicationController
   require 'json'
   before_action :ensure_logged_in
   before_action :set_table, except: [:show_table]
+  before_action :ensure_table_exists, only: [:quit_single_player, :forfeit, :clear_finished_table]
 
   def force_new_table
     current_user.table = nil
@@ -34,14 +35,14 @@ class TablesController < ApplicationController
   end
 
   def quit_single_player
-    if !@table.nil? and @table.one_player?
+    if @table.one_player?
       @table.remove_all_fiends
     end
     redirect_to root_url
   end
 
   def forfeit
-    if !@table.nil? and @table.two_player? and !@table.game_over?
+    if @table.two_player? and !@table.game_over?
       # using id's because of stale record issues
       other_fiend = @table.fiends.select{|u| u.id != current_user.id}.pop
       @table.winner = other_fiend
@@ -52,7 +53,7 @@ class TablesController < ApplicationController
   end
 
   def clear_finished_table
-    if @table and @table.game_over?
+    if @table.game_over?
       @table.remove_all_fiends
     end
     redirect_to root_url
@@ -62,6 +63,12 @@ class TablesController < ApplicationController
     
     def set_table
       @table = current_user.table
+    end
+
+    def ensure_table_exists
+      if @table.nil?
+        redirect_to root_url
+      end
     end
 
 end
