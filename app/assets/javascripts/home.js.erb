@@ -102,7 +102,7 @@ var updateCurrentChallenge = function(lobbyState) {
             challenge_status = '';
             withdraw_text = 'Withdraw';
         }
-        $outgoing_challenge_form.append("Challenged:<br>" + challengee + challenge_status + "<br>");
+        $outgoing_challenge_form.append("Challenged: " + challengee + challenge_status + "<br>");
         $outgoing_challenge_form.append($('<input type="hidden" id="username" name="username">').html(challengee));
         $outgoing_challenge_form.append('<input type="submit" value="' + withdraw_text + '" style="font-size: 18px;">');
     } else {
