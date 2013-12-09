@@ -1,8 +1,8 @@
 BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
-  get "lobby/status"
-  get "lobby/accept"
-  get "lobby/reject"
-  get "lobby/challenge"
+  get "lobby/status", as: 'lobby_status'
+  post "lobby/accrej", as: 'accrej'
+  post "lobby/challenge", as: 'challenge'
+  post "lobby/withdraw", as: 'withdraw'
   resources :users
   # resources :tables
   get "table" => "tables#show_table", as: "show_table"
@@ -16,7 +16,7 @@ BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
   get "log_out" => "sessions#destroy", as: "log_out"
   get "log_in" => "sessions#new", as: "log_in"
   get "sign_up" => "users#new", as: "sign_up"
-
+  get "leaderboard" => "leaderboard#index"
   post "flip" => "tables#flip", as: "flip"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

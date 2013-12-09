@@ -1,16 +1,17 @@
 class Challenge < ActiveRecord::Base
-  belongs_to :challenger, class_name: 'User', foreign_key: 'challenger_id', dependent: :destroy
+  belongs_to :challenger, class_name: 'User', foreign_key: 'challenger_id'
   belongs_to :challengee, class_name: 'User', foreign_key: 'challengee_id'
 
   def pending?
-    accepted.nil?
+    self.accepted.nil?
   end
 
   def rejected?
-    accepted == false
+    self.accepted == false
   end
 
   def reject!
-    accepted = false
+    self.accepted = false
+    save
   end
 end

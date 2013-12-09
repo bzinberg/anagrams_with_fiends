@@ -1,6 +1,6 @@
 class LobbyController < ApplicationController
   before_action :ensure_logged_in
-  before_action :set_challenge, only: [:accept, :reject]
+  # before_action :set_incoming_challenge, only: [:accrej]
 
   def status
     if current_user.table.nil?
@@ -11,8 +11,11 @@ class LobbyController < ApplicationController
   end
 
   def challenge
-    challengee = User.find_by_username(params[:challengee])
-    if challengee
+    if params[:challengeeField]
+      challengee = User.find_by_username(params[:challengeeField])
+    end
+
+    if !challengee.nil?
       challenge = Challenge.create(challenger: current_user, challengee: challengee)
       current_user.outgoing_challenge = challenge
       current_user.save
@@ -27,11 +30,31 @@ class LobbyController < ApplicationController
     render :status
   end
 
-  def accept
+  def accrej
+    if params[:challengerField]
+      challenger = User.find_by_username(params[:challengerField])
+      if (challenger && challenger.outgoing_challenge && challenger.outgoing_challenge.challengee == current_user)
+        @challenge = challenger.outgoing_challenge
+      end
+    end
+
     if !@challenge.nil?
-      table = Table.create(fiends: [current_user, @challenge.challenger])
-      current_user.incoming_challenges.destroy_all
-      @challenge.challenger.incoming_challenges.destroy_all
+      if params[:challengeStatusField] == 'Accept'
+        # Accept the challenge
+        table = Table.create(fiends: [current_user, @challenge.challenger])
+        current_user.incoming_challenges.destroy_all
+        @challenge.challenger.incoming_challenges.destroy_all
+      else
+        # Reject the challenge
+        @challenge.reject!
+      end
+    end
+    render :status
+  end
+
+  def withdraw
+    if !current_user.outgoing_challenge.nil?
+      current_user.outgoing_challenge.destroy
     end
     render :status
   end
@@ -44,8 +67,8 @@ class LobbyController < ApplicationController
       end
     end
     
-    def set_challenge
-      challenger = User.find_by_username(params[:challenger])
+    def set_incoming_challenge
+      challenger = User.find_by_username(params[:username])
       if (challenger && challenger.outgoing_challenge && challenger.outgoing_challenge.challengee == current_user)
         @challenge = challenger.outgoing_challenge
       end

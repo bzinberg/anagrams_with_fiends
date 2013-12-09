@@ -21,6 +21,16 @@ ActiveRecord::Schema.define(version: 20131208195805) do
     t.datetime "updated_at"
   end
 
+  create_table "games", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sessions", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "tables", force: true do |t|
     t.string   "initial_bag"
     t.datetime "created_at"
@@ -53,6 +63,8 @@ ActiveRecord::Schema.define(version: 20131208195805) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "last_lobby_poll"
+    t.float    "rating_mean",              default: 25.0
+    t.float    "rating_deviation",         default: 8.333333333333334
   end
 
 end

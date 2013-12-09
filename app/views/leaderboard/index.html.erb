@@ -1,0 +1,49 @@
+<!-- Primary Authors: Leon and Bethany-->
+
+<center>
+    <div id="header">
+      <img src="<%= asset_path 'green-fiend-clipart.png' %>" width=150px> 
+      <img src="<%= asset_path 'purple-fiend-clipart.png' %>" width=150px/><br>
+    </div>
+    <div id="leaderboards">
+      <div id="multiplayerLB" class="leaderboard">
+        <h1> Multiplayer Leaderboard </h1>
+        <table class="index">
+          <thead> <tr>
+            <th>Ranking</th>
+            <th>Username</th>
+            <th>Rating</th>
+          </tr></thead>
+          <tbody>
+            <% @users.each_with_index do |user, i| %>
+            <tr>
+              <td><%= i+1 %></td>
+              <td><%= user.username %></td>
+              <td><%= user.rank %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div id="singleplayerLB" class="leaderboard">
+        <h1> Single-player Leaderboard </h1>
+        <table class="index">
+          <thead> <tr>
+            <th>Ranking</th>
+            <th>Username</th>
+            <th>High Score</th>
+          </tr></thead>
+          <tbody>
+            <% @users.each_with_index do |user, i| %>
+            <tr>
+              <td><%= i+1 %></td>
+              <td><%= user.username %></td>
+              <td><%= user.high_score %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+</center>

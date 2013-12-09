@@ -51,8 +51,7 @@ class Table < ActiveRecord::Base
   end
 
   def game_over!
-    winner = determine_winner(current_state)
-    self.winner = winner
+    record_results
     fiends.delete_all
     save
   end
@@ -128,6 +127,7 @@ class Table < ActiveRecord::Base
     attr_reader :next_turn_number
     attr_reader :valid
     attr_reader :score
+    attr_reader :table
 
     # Copy on read to avoid mutation / rep exposure
     def bag
@@ -146,8 +146,8 @@ class Table < ActiveRecord::Base
 
     def initialize(table)
       @table = table
-      ##  if an entry is queried that doesn't exist, creates a new Set to fill
-      ##  the entry
+      # if an entry is queried that doesn't exist, creates a new Set to fill
+      # the entry
       # @stashes = Hash.new {|h,key| h[key] = Set.new}
       ## Since we do not allow deletion of fiends, we expect the keys in
       ## @stashes to be precisely @table.fiends
@@ -193,7 +193,6 @@ class Table < ActiveRecord::Base
 
     # precondition: word is lowercase
     def register_build(build)
-      puts "build word? #{build.word} #{Table::is_word?(build.word)}"
       word = build.word
       
       if !(
@@ -216,7 +215,6 @@ class Table < ActiveRecord::Base
     end
 
     def register_morph(morph)
-      puts "morph word? #{morph.word} #{Table::is_word?(morph.word)}"
       need_from_pool = morph.word.charwise_remove(morph.changed_turn.word)
       if !(
         @table.fiends.include?(morph.doer) and
@@ -279,9 +277,40 @@ class Table < ActiveRecord::Base
       generate_initial_bag
     end
 
-    def generate_initial_bag
-        puts 'generating bag'
-        self.initial_bag = INITIAL_BAG_LETTERS.split('').shuffle.join('')
+    def record_results
+      # ranking or leaderboard for 2, 1 players respectively
+      if fiends.length == 2
+        winner = determine_winner(current_state)
+        self.winner = winner
+
+        if winner == fiends[0]
+          update_rank(fiends[0], fiends[1])
+        else
+          update_rank(fiends[1], fiends[0])
+        end
+      elsif fiends.length == 1
+        winner = fiends[0]
+        self.winner = winner
+
+        fiends[0].update_highscore(current_state.score)
+      end
     end
 
+    require 'saulabs/trueskill'
+    include Saulabs::TrueSkill
+    def update_rank(winner, loser)
+      fiend_ratings = [winner.rating, loser.rating]
+
+
+      # high beta value because randomness is high
+      FactorGraph.new(fiend_ratings, [1,2], beta: 10).update_skills
+
+      winner.rating = fiend_ratings[0][0]
+      loser.rating = fiend_ratings[1][0]
+
+    end
+
+    def generate_initial_bag
+      self.initial_bag = INITIAL_BAG_LETTERS.split('').shuffle.join('')
+    end
 end

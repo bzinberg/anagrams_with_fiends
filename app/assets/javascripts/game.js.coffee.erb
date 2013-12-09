@@ -1,18 +1,19 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
-
+# Make a json object {letter -> image of corresponding tile}
 TILE_IMAGES = {
-<% ('a'..'z').each do |c| %>
-  <%= c %>: '<%= asset_path "tiles/#{c}.png" %>'
-<% end %>
+    <% ('a'..'z').each do |c| %>
+      <%= c %>: '<%= asset_path "tiles/#{c}.png" %>'
+    <% end %>
 }
 
-window.initTable = (table_uuid) ->
-    #gameState = {}
+# Fiend image list
+FIENDS = ['<%= asset_path "green-fiend-clipart.png" %>', '<%= asset_path "purple-fiend-clipart.png" %>']
+
+# The main display function, which is called when the table is loaded.
+window.initTable = (table_uuid, cur_username) ->
     dispatcher = null
     window.next_turn_number = 1
 
+    # Called when the server makes the socket connection to the client
     initSocket = () ->
         dispatcher = new WebSocketRails(window.document.location.host + "/websocket")
         channel = dispatcher.subscribe_private(table_uuid)
@@ -20,18 +21,23 @@ window.initTable = (table_uuid) ->
         dispatcher.on_open = (data) ->
             dispatcher.trigger 'table.state_request'
 
+        # Handler for submitting flip requests via the Flip tile button
         $('#flip_tile').on 'click', () ->
             # TODO stop using global window.next_turn_number
-            console.log "tile flip requested!" + window.next_turn_number
             dispatcher.trigger 'table.flip_tile_request', {"turn_number": window.next_turn_number}
             $('#word_entry').focus()
 
+        # Handler for submitting 
         $('#word_entry').on 'keypress', (event, abc) ->
             # trigger when enter is pressed
             if(event.which == 13)
+                if $('#word_entry').val() == ""
+                    dispatcher.trigger 'table.flip_tile_request', {"turn_number": window.next_turn_number}
+                    $('#word_entry').focus()
                 # TODO fix redundant $('#word_entry')
-                dispatcher.trigger 'table.build_request', {"word": $('#word_entry').val()}
-                $('#word_entry').val('').focus()
+                else
+                    dispatcher.trigger 'table.build_request', {"word": $('#word_entry').val()}
+                    $('#word_entry').val('').focus()
 
         channel.bind 'game_info.next_turn_number', (response) ->
             window.next_turn_number = response
@@ -42,57 +48,83 @@ window.initTable = (table_uuid) ->
             updateAll(response)
 
         channel.bind 'game_event.illegal_move', (response) ->
-            alert("Illegal move")
+            if cur_username == response.username
+                alert(response.failmsg
+                )
 
         return dispatcher
-
+    # Use all methods to update the game
     updateAll = (state) ->
-        console.log state.next_turn_number
         window.next_turn_number = state.next_turn_number
+        # Call all the update methods
         updateBag(state)
         updatePool(state)
-        updateStashes(state)
         updateScore(state)
-        gameState = state
+        updateStashes(state)
+        # If there is a winner, then the game is over 
+        if state.hasOwnProperty("winner")
+            game_end(state)
+        gamestate = state
+        # If the size of the bag is 0, the game is over on the next tile flip
         if (state.bag_size == 0) 
             $('#flip_tile').text("End Game")
 
+    # Update the bag, by setting the HTML to the bag size
     updateBag = (state) ->
-        console.log("updating bag")
         $bagBox = $('#bagBox')
         $bagBox.html(state.bag_size)
 
+    # Update the score, reading it out of the state
     updateScore = (state) ->
-        console.log('updating score')
-        $score = $('#score')
-        $score.html("Score: " + state.score)
+        $score = $('#scoreDiv')
+        # If it's singleplayer only, show the score
+        # Otherwise hide it for multiplayer
+        # The stashes will be length 1 for singleplayer
+        if (Object.keys(state.stashes).length == 1)
+            $score.show()
+            $score.html("Score: " + state.score)
+        else
+            $score.hide()
 
+    # Add a letter to the element
     appendLetter = ($elt, letter) ->
         $tile = $('<img src="' + TILE_IMAGES[letter] + '" hspace="1">').addClass('tile')
         $elt.append($tile)
 
+    # Update the pool
     updatePool = (state) ->
-        console.log("updating pool")
         $poolDiv = $('#poolDiv')
         $poolDiv.html('')
         letters = state.pool
         i = 0
         letters.split("").forEach((letter) ->
-            if (i%10==0)
+            # If the tile is mod 10, make a new line
+            if (i%10==0 and i > 0)
                 $poolDiv.append("<br>")
             i++
             appendLetter($poolDiv, letter)
         )
 
-    updateSingleStash = (state, stashName) ->
-        $stashDiv = findStashDivByName(stashName)
-        $stashDiv.html('')
+    # Update a single stash
+    updateSingleStash = (state, stashName, i) ->
+        # Add the relevant classes
+        $myStash = $('<div>').addClass('singleStash')
+        $myTitle = $('<div>').addClass('fancyBox').addClass('stashTitle')
+        $myTitle.html(stashName + ' ')
+        # Append the fiend image
+        $myTitle.append($('<img src="' + FIENDS[i] + '" height="40px">'))
+        $myStash.append($myTitle)
+        $myStash.append($('<br>'))
 
+        $stashDiv = $('#stashDiv')
+
+        # For each word, show it letter-by-letter
         state.stashes[stashName].forEach((entry) ->
             $wordDiv = $("<div>").attr('turnNumber', entry[0]).addClass('wordDiv')
             entry[1].split('').forEach((letter) ->
                 appendLetter($wordDiv, letter)
             )
+            # Enable clicking to morph a word
             $wordDiv.on 'click', () ->
                 submitMorph(entry[0])
                 $('#word_entry').val('')
@@ -101,29 +133,41 @@ window.initTable = (table_uuid) ->
             f1 = () -> $wordDiv.addClass("hasBorder")
             f2 = () -> $wordDiv.removeClass("hasBorder")
             $wordDiv.hover( f1, f2 )
-            $stashDiv.append($wordDiv)
-            $stashDiv.append("<br>")
-            console.log entry
+            $myStash.append($wordDiv)
+            $myStash.append("<br>")
         )
 
+        $stashDiv.append($myStash)
+
+    # Submit a morph request
     submitMorph = (changed_turn_number) ->
         dispatcher.trigger 'table.morph_request', {
           changed_turn_number: changed_turn_number,
           word: $('#word_entry').val()
         }
 
+    # Update all of the stashes
     updateStashes = (state) ->
-        console.log("updating stashes")
-        updateSingleStash(state, name) for name, words of state.stashes
+        # Reset the HTML so it doesn't stack with append
+        $("#stashDiv").html("")
+        for name, i in Object.keys(state.stashes).sort()
+            updateSingleStash(state, name, i)
 
-    findStashDivByName = (name) ->
-        # TODO for multiplayer mode, this will need to be a nontrivial method
-        return $("#stashDiv")
-
+    # Set up the socket
     window.show_table_setup = () ->
         dispatcher = initSocket()
         #gameState.stashes[fiend].sort((pair1, pair2) ->
         #  return pair1[0] - pair2[0]
         #) for fiend in gameState.stashes
 
+    # When the game is over, end it
+    game_end = (end_state) ->
+        # Hide unnecessary elements
+        $("#inPlay").html("")
+        # Give it a fancy box and display the end text
+        $("#winner").addClass("fancyBox")
+        $("#winner").html("Game Over! <br><br> Winner: " + end_state.winner + '<br><br>')
+        # Add the image of the fiend that is the winner
+        i = Object.keys(end_state.stashes).sort().indexOf(end_state.winner)
+        $("#winner").append('<img src="' + FIENDS[i] + '" height="100px">').after('<br><br>')
     # $ -> onready()
