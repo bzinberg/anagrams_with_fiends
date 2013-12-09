@@ -9,7 +9,7 @@ TILE_IMAGES = {
 FIENDS = ['<%= asset_path "green-fiend-clipart.png" %>', '<%= asset_path "purple-fiend-clipart.png" %>']
 
 # The main display function, which is called when the table is loaded.
-window.initTable = (table_uuid) ->
+window.initTable = (table_uuid, cur_username) ->
     dispatcher = null
     window.next_turn_number = 1
 
@@ -48,7 +48,8 @@ window.initTable = (table_uuid) ->
             updateAll(response)
 
         channel.bind 'game_event.illegal_move', (response) ->
-            alert("Illegal move")
+            if cur_username == response.username
+                alert(response.failmsg)
 
         return dispatcher
     # Use all methods to update the game

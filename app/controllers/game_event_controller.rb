@@ -47,7 +47,7 @@ class GameEventController < WebsocketRails::BaseController
       send_channel_msg(:new_state, @table.to_h)
     else
       puts 'build request failed'
-      send_channel_msg(:illegal_move, 'Failed build')
+      send_channel_msg(:illegal_move, {failmsg: 'Failed build', username: current_user.username} )
     end
   end
 
@@ -65,7 +65,7 @@ class GameEventController < WebsocketRails::BaseController
       send_channel_msg(:new_state, @table.to_h)
     else
       puts 'Failed morph request'
-      send_channel_msg(:illegal_move, 'Failed morph')
+      send_channel_msg(:illegal_move, {failmsg: 'Failed morph', username: current_user.username} )
     end
   end
 end
