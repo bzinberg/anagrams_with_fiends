@@ -17,7 +17,9 @@
              <%= link_to 'Start A Singleplayer Table', show_table_path %>
           <% else %>
              <%= link_to 'Return to your previous table', show_table_path %><br>
-             <%= link_to 'Discard previous table and start anew', force_new_table_path, confirm: 'Are you sure?' %>
+             <%=
+               # link_to 'Discard previous table and start anew', force_new_table_path, confirm: 'Are you sure?'
+              %>
            <% end %>
            <br>
            <div id = "lobbyDiv">

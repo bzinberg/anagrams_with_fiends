@@ -1,6 +1,10 @@
+# Author: Ben
+
 class Challenge < ActiveRecord::Base
   belongs_to :challenger, class_name: 'User', foreign_key: 'challenger_id'
   belongs_to :challengee, class_name: 'User', foreign_key: 'challengee_id'
+  validates :challenger, presence: true, uniqueness: true
+  validates :challengee, presence: true
 
   def pending?
     self.accepted.nil?

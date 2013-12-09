@@ -1,3 +1,4 @@
+# Author: Ben, Rankings by Damien
 class User < ActiveRecord::Base
   belongs_to :table, inverse_of: :fiends
   has_one :outgoing_challenge, class_name: 'Challenge', foreign_key: 'challenger_id'
@@ -45,6 +46,10 @@ class User < ActiveRecord::Base
   end
 
   def set_challengee(other_user)
+    # We don't want orphaned challenges
+    if !self.outgoing_challenge.nil?
+      self.outgoing_challenge.destroy
+    end
     challenge = Challenge.new(challenger: self, challengee: other_user)
     self.outgoing_challenge = challenge
     save

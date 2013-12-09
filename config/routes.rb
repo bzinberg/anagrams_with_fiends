@@ -6,7 +6,11 @@ BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
   resources :users
   # resources :tables
   get "table" => "tables#show_table", as: "show_table"
-  get "forcenewtable" => "tables#force_new_table", as: "force_new_table"
+  # get "forcenewtable" => "tables#force_new_table", as: "force_new_table"
+  post "flip" => "tables#flip", as: "flip"
+  get "quitsingleplayer" => "tables#quit_single_player", as: "quit_single_player"
+  get "forfeit" => "tables#forfeit", as: "forfeit"
+  get "clearfinishedtable" => "tables#clear_finished_table", as: "clear_finished_table"
 
   # get '/mytable', to: 'tables#show_my_table'
   resources :sessions, except: [:new]
@@ -17,7 +21,6 @@ BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
   get "log_in" => "sessions#new", as: "log_in"
   get "sign_up" => "users#new", as: "sign_up"
   get "leaderboard" => "leaderboard#index"
-  post "flip" => "tables#flip", as: "flip"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

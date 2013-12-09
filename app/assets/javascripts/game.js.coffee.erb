@@ -1,3 +1,7 @@
+# Authors: All (Damien, Ben, Bethany, Leon)
+
+<% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
+
 # Make a json object {letter -> image of corresponding tile}
 TILE_IMAGES = {
     <% ('a'..'z').each do |c| %>
@@ -170,4 +174,6 @@ window.initTable = (table_uuid, cur_username) ->
         # Add the image of the fiend that is the winner
         i = Object.keys(end_state.stashes).sort().indexOf(end_state.winner)
         $("#winner").append('<img src="' + FIENDS[i] + '" height="100px">').after('<br><br>')
+        $("#winner").append('<br><br>')
+        $("#winner").append($('<a href="<%= clear_finished_table_path %>">').text('Return to Lobby'))
     # $ -> onready()

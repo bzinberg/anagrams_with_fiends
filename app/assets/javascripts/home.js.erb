@@ -1,3 +1,5 @@
+// Primary Authors: Bethany, Leon
+
 <% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
 
 // var lobbyState = {
@@ -11,7 +13,7 @@
 // };
 var STATUS_URL = '<%= lobby_status_path format: :json %>',
     SHOW_TABLE_URL = '<%= show_table_path %>',
-    LOBBY_REFRESH_DELAY = 5000;
+    LOBBY_REFRESH_DELAY = 3000;
 
 var $online_users_form,
     $incoming_challenges_form,

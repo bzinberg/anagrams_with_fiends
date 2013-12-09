@@ -8,7 +8,12 @@
   <% end %>
 <% end %>
 <div id="nav_links">
-  <%= link_to "Log out", log_out_path %>
+  <%= link_to "Log out", log_out_path %><br>
+  <% if @table.one_player? %>
+    <%= link_to "Discard game", quit_single_player_path %>
+  <% elsif @table.two_player? %>
+    <%= link_to "Forfeit", forfeit_path %><br>
+  <% end %>
 </div>
 <center><div class="fancyBox">Tiles left in bag: <span id="bagBox"></span></div>
 <div id = "inPlay">
