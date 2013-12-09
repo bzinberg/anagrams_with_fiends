@@ -73,6 +73,29 @@ class Table < ActiveRecord::Base
     save
   end
 
+  def record_results
+    # ranking or leaderboard for 2, 1 players respectively
+    if fiends.length == 2
+      winner = determine_winner(current_state)
+      self.winner = winner
+      puts 'Winner: ' + winner.username
+
+      puts '2 players: adjust ratings'
+      if winner == fiends[0]
+        update_rank(fiends[0], fiends[1])
+      else
+        update_rank(fiends[1], fiends[0])
+      end
+    elsif fiends.length == 1
+      winner = fiends[0]
+      self.winner = winner
+      puts 'Winner: ' + winner.username
+
+      fiends[0].update_highscore(current_state.score)
+    end
+  end
+
+
   def determine_winner(state)
     letter_counts = state.stashes.map{|fiend, tt| [tt.inject(0) {|x,t| x + t.word.length}, fiend]}.sort
     if letter_counts[0][0] != letter_counts[1][0]
@@ -294,28 +317,6 @@ class Table < ActiveRecord::Base
       self.uuid = _uuid
 
       generate_initial_bag
-    end
-
-    def record_results
-      # ranking or leaderboard for 2, 1 players respectively
-      if fiends.length == 2
-        winner = determine_winner(current_state)
-        self.winner = winner
-        puts 'Winner: ' + winner.username
-
-        puts '2 players: adjust ratings'
-        if winner == fiends[0]
-          update_rank(fiends[0], fiends[1])
-        else
-          update_rank(fiends[1], fiends[0])
-        end
-      elsif fiends.length == 1
-        winner = fiends[0]
-        self.winner = winner
-        puts 'Winner: ' + winner.username
-
-        fiends[0].update_highscore(current_state.score)
-      end
     end
 
     require 'saulabs/trueskill'

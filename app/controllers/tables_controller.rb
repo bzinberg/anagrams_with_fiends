@@ -47,7 +47,7 @@ class TablesController < ApplicationController
       other_fiend = @table.fiends.select{|u| u.id != current_user.id}.pop
       @table.winner = other_fiend
       @table.save
-      @table.game_over!
+      @table.record_results
     end
     render :show_table
   end
