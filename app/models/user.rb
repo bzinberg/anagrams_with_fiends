@@ -1,3 +1,4 @@
+# Author: Ben, Rankings by Damien
 class User < ActiveRecord::Base
   belongs_to :table, inverse_of: :fiends
   has_one :outgoing_challenge, class_name: 'Challenge', foreign_key: 'challenger_id'

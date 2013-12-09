@@ -1,3 +1,5 @@
+# Author: Damien
+
 class ChannelAuthorizationController < WebsocketRails::BaseController
   def authorize_channels
     # channel name is uuid of table

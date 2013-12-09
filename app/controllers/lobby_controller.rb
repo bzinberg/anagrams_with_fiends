@@ -1,3 +1,5 @@
+# Author: Ben
+
 class LobbyController < ApplicationController
   before_action :ensure_logged_in
   # before_action :set_incoming_challenge, only: [:accrej]

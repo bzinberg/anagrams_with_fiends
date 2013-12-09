@@ -1,3 +1,5 @@
+# Author: Bethany
+
 class SessionsController < ApplicationController
   def new
     # redirect to index if the user is already logged in

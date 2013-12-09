@@ -1,3 +1,5 @@
+# Primary Author: Damien, Secondary Author: Ben
+
 class GameEventController < WebsocketRails::BaseController
   def initialize_session
     # run when a socket is set up
