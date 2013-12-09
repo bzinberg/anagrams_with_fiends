@@ -6,8 +6,6 @@ class User < ActiveRecord::Base
   validates :username, presence: true, uniqueness: true
   has_many :turns
 
-  attr_reader :high_score
-
   # If a user hasn't polled lobby in more than LOBBY_TIMEOUT seconds, he is
   # considered to "not be in the lobby."
   # TODO Change to something reasonable, like 5 or 10
