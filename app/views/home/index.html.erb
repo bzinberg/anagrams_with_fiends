@@ -12,7 +12,7 @@
       <img src="<%= asset_path 'green-fiend-clipart.png' %>" width = 150px> 
         <img src="<%= asset_path 'purple-fiend-clipart.png' %>" width=150px/><br>
         <% if signed_in? %>
-          Welcome to Anagrams with Fiends! <br>You are logged in as <%= current_user.username %>.  Your rank is <%= current_user.rank %><br>
+          Welcome to Anagrams with Fiends! <br>You are logged in as <%= current_user.username %>.  Your rank is <%= current_user.rank %>.<br>
             <% if current_user.table.nil? %>
              <%= link_to 'Start A Singleplayer Table', show_table_path %>
           <% else %>
