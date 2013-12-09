@@ -3,7 +3,6 @@ class LobbyController < ApplicationController
   # before_action :set_incoming_challenge, only: [:accrej]
 
   def status
-    puts 'FUCK2'
     if current_user.table.nil?
       current_user.update_attribute(:last_lobby_poll, Time.now.to_i)
     else

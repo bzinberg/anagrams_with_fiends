@@ -24,3 +24,10 @@ module SessionsHelper
     @current_user ||= User.find(session[:user_id])
   end
 end
+
+  def ensure_logged_in
+    if !signed_in?
+      redirect_to log_in_url, message: "Please log in first."
+    end
+  end
+    
