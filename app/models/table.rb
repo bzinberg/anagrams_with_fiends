@@ -68,16 +68,18 @@ class Table < ActiveRecord::Base
   end
 
   def game_over!
+    self.winner = determine_winner(current_state)
+    save
     record_results
     remove_all_fiends
     save
   end
 
+  # Pre-condition: self.winner is set
   def record_results
     # ranking or leaderboard for 2, 1 players respectively
-    if fiends.length == 2
-      winner = determine_winner(current_state)
-      self.winner = winner
+    if fiends.length == 2 and !self.winner.nil?
+      winner = self.winner
       puts 'Winner: ' + winner.username
 
       puts '2 players: adjust ratings'
@@ -88,7 +90,6 @@ class Table < ActiveRecord::Base
       end
     elsif fiends.length == 1
       winner = fiends[0]
-      self.winner = winner
       puts 'Winner: ' + winner.username
 
       fiends[0].update_highscore(current_state.score)
@@ -97,6 +98,11 @@ class Table < ActiveRecord::Base
 
 
   def determine_winner(state)
+    # We shouldn't be calling this for one-player games, but
+    if state.stashes.size == 1
+      return state.stashes.keys.first
+    end
+
     letter_counts = state.stashes.map{|fiend, tt| [tt.inject(0) {|x,t| x + t.word.length}, fiend]}.sort
     if letter_counts[0][0] != letter_counts[1][0]
       # Return the fiend with the most letters in her stash
