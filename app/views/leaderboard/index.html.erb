@@ -18,7 +18,7 @@
             <th>Rating</th>
           </tr></thead>
           <tbody>
-            <% @users.each_with_index do |user, i| %>
+            <% @users.order('high_score DESC').each_with_index do |user, i| %>
             <tr>
               <td><%= i+1 %></td>
               <td><%= user.username %></td>

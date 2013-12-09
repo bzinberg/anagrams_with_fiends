@@ -11,22 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131208195805) do
+ActiveRecord::Schema.define(version: 20131209070624) do
 
   create_table "challenges", force: true do |t|
     t.integer  "challenger_id"
     t.integer  "challengee_id"
     t.boolean  "accepted"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "games", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "sessions", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -57,7 +47,7 @@ ActiveRecord::Schema.define(version: 20131208195805) do
   create_table "users", force: true do |t|
     t.string   "username"
     t.string   "password_digest"
-    t.integer  "high_score"
+    t.integer  "high_score",               default: 0,                 null: false
     t.integer  "table_id"
     t.integer  "flip_request_turn_number"
     t.datetime "created_at"
