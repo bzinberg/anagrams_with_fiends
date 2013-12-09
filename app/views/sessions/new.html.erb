@@ -1,11 +1,10 @@
-<!-- Primary author: Dongyoung Kim -->
-
 <% alert_string = alert %>
 
 <%= form_tag sessions_path do %>
-
-  <div class="form-signup">
-    <h2 class="form-signup-heading">Log in</h2>
+<center>
+  <img src="<%= asset_path 'green-fiend-clipart.png' %>" width=150px/><br>
+  <div>
+    <h2>Log in</h2>
     <p>
       <%= text_field_tag :username, params[:username], :class => 'form-control', :placeholder => "Username" %>
     </p>
@@ -14,7 +13,7 @@
       <%= password_field_tag :password, params[:password], :class => 'form-control', :placeholder => "Password" %>
     </p>
 
-    <p class="button">
+    <p>
       <%= submit_tag "Log in", :class => 'btn btn-lg btn-primary btn-block'%>
     </p>
 
@@ -24,5 +23,5 @@
     <p class = "error_message"><%= alert_string %></p>
 
   </div>
-
+</center>
 <% end %>

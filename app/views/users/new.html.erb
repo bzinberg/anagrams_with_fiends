@@ -2,9 +2,10 @@
 
 <%= form_for @user do |f| %>
   
-
-  <div class="form-signup">
-    <h2 class="form-signup-heading">Please sign up</h2>
+<center>
+  <div>
+     <img src="<%= asset_path 'purple-fiend-clipart.png' %>" width=150px/><br>
+    <h2>Please sign up</h2>
 
     <p>
       <%= f.text_field :username, :class=>'form-control', :placeholder => "Username" %>
@@ -34,7 +35,7 @@
     <% end %>
 
   </div>
-
+</center>
 <% end %>
 
  
