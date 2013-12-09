@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
 
   # Return the collection of online users
   def self.online
-    where('last_lobby_poll >= ?', Time.now.to_i - LOBBY_TIMEOUT).where(table: nil)
+    where('last_lobby_poll >= ?', Time.now.to_i - LOBBY_TIMEOUT).where(table_id: nil)
   end
 
   require 'saulabs/trueskill'
