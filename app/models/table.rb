@@ -293,7 +293,7 @@ class Table < ActiveRecord::Base
           update_rank(fiends[1], fiends[0])
         end
       elsif fiends.length == 1
-          update_leaderboard(fiends[0])
+        update_highscore(fiends[0], current_state.score)
       end
     end
 
@@ -314,8 +314,10 @@ class Table < ActiveRecord::Base
       puts 'ratings after: ' + [winner.rating, loser.rating].to_s
     end
 
-    def update_leaderboard
-        # TODO implement
+    def update_highscore(fiend, newscore)
+      if newscore > fiend.high_score
+        fiend.high_score = newscore
+      end
     end
 
     def generate_initial_bag
