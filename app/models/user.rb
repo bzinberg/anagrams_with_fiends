@@ -66,7 +66,6 @@ class User < ActiveRecord::Base
   # build request was denied due to illegality.
   def submit_build(word)
     build = Build.new(doer: self, word: word, table: table)
-    puts "Upon submit: #{word}, #{build.word}"
     return table.process_submitted_buildmorph(build)
   end
 
@@ -76,10 +75,7 @@ class User < ActiveRecord::Base
   # illegality.  Pre-condition: changed_turn is a turn that represents a word
   # that is currently in a player's stash in self.table.
   def submit_morph(changed_turn, word)
-    puts "Classes: changed_turn #{changed_turn.class}"
-    puts "Word: #{word}; Table: #{table.id}"
     morph = Morph.new(doer: self, changed_turn: changed_turn, word: word, table: table)
-    puts "Oh btw, I'm trying to submit a morph of #{changed_turn.word} into #{word}"
     return table.process_submitted_buildmorph(morph)
   end
 

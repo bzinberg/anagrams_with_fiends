@@ -193,7 +193,6 @@ class Table < ActiveRecord::Base
 
     # precondition: word is lowercase
     def register_build(build)
-      puts "build word? #{build.word} #{Table::is_word?(build.word)}"
       word = build.word
       
       if !(
@@ -216,7 +215,6 @@ class Table < ActiveRecord::Base
     end
 
     def register_morph(morph)
-      puts "morph word? #{morph.word} #{Table::is_word?(morph.word)}"
       need_from_pool = morph.word.charwise_remove(morph.changed_turn.word)
       if !(
         @table.fiends.include?(morph.doer) and
@@ -284,9 +282,7 @@ class Table < ActiveRecord::Base
       if fiends.length == 2
         winner = determine_winner(current_state)
         self.winner = winner
-        puts 'Winner: ' + winner.username
 
-        puts '2 players: adjust ratings'
         if winner == fiends[0]
           update_rank(fiends[0], fiends[1])
         else
@@ -295,7 +291,6 @@ class Table < ActiveRecord::Base
       elsif fiends.length == 1
         winner = fiends[0]
         self.winner = winner
-        puts 'Winner: ' + winner.username
 
         fiends[0].update_highscore(current_state.score)
       end
@@ -304,10 +299,8 @@ class Table < ActiveRecord::Base
     require 'saulabs/trueskill'
     include Saulabs::TrueSkill
     def update_rank(winner, loser)
-      puts 'winner, loser ' + winner.username + ', ' + loser.username
       fiend_ratings = [winner.rating, loser.rating]
 
-      puts 'ratings before: ' + fiend_ratings.to_s
 
       # high beta value because randomness is high
       FactorGraph.new(fiend_ratings, [1,2], beta: 10).update_skills
@@ -315,11 +308,9 @@ class Table < ActiveRecord::Base
       winner.rating = fiend_ratings[0][0]
       loser.rating = fiend_ratings[1][0]
 
-      puts 'ratings after: ' + [winner.rating, loser.rating].to_s
     end
 
     def generate_initial_bag
-      puts 'generating bag'
       self.initial_bag = INITIAL_BAG_LETTERS.split('').shuffle.join('')
     end
 end

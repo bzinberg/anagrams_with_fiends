@@ -10,7 +10,6 @@ class UsersController < ApplicationController
 
   # Somehow the built-in validation for nil password_digest was not working, so I added a custom validation
   def create
-    puts(user_params)
     @user = User.new(user_params)
 
     if @user.password == ""
