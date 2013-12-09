@@ -1,4 +1,3 @@
-
 class UsersController < ApplicationController
   def new
     # redirect to index if the user is already logged in

@@ -38,12 +38,6 @@ class LobbyController < ApplicationController
 
   private
 
-    def ensure_logged_in
-      if !signed_in?
-        redirect_to log_in_url
-      end
-    end
-    
     def set_challenge
       challenger = User.find_by_username(params[:challenger])
       if (challenger && challenger.outgoing_challenge && challenger.outgoing_challenge.challengee == current_user)

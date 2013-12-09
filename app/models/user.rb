@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
 
   # DON'T CONFUSE WITH RANK!
   # Returns a trueskill Rating object
+  # wrapped in a list because trueskill's implementation is team-based
   def rating
     return [Rating.new(self.rating_mean, self.rating_deviation)]
   end
