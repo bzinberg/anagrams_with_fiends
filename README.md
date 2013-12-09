@@ -2,7 +2,7 @@
 ### Team ₯: bzinberg, jiangty, lapentab, ycz
 
 __Anagrams with Fiends__: A webapp for playing the game Anagrams.
-Hosted at http://serene-dawn-1769.herokuapp.com/.
+Hosted at http://serene-dawn-1769.herokuapp.com/ and http://glados.mit.edu:3000.
 
 Anagrams is a fast-paced, challenging word game for one or two fiends! To play, create an account and log on to the app at the URL above, then either start a single-player game or challenge another player in the lobby to a duel. Game rules can be found at http://en.wikipedia.org/wiki/Anagrams_(game).
 
