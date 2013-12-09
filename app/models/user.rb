@@ -20,8 +20,7 @@ class User < ActiveRecord::Base
   include Saulabs::TrueSkill
   # for client-facing use
   def rank
-    r = self.rating_mean - 3*self.rating_deviation
-    return r >= 0 ? r.round(1) : 0.0
+    (100 + self.rating_mean - 3*self.rating_deviation).round(1)
   end
 
   def update_highscore(newscore)
