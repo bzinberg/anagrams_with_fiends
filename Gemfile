@@ -43,6 +43,9 @@ gem 'bcrypt-ruby', '~> 3.0.1'
 # websockets support
 gem 'websocket-rails'
 
+# trueskill
+gem 'trueskill'
+
 # jquery-turbolinks
 # gem 'jquery-turbolinks'
 

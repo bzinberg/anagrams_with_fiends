@@ -51,8 +51,7 @@ class Table < ActiveRecord::Base
   end
 
   def game_over!
-    winner = determine_winner(current_state)
-    self.winner = winner
+    record_results
     fiends.delete_all
     save
   end
@@ -146,8 +145,8 @@ class Table < ActiveRecord::Base
 
     def initialize(table)
       @table = table
-      ##  if an entry is queried that doesn't exist, creates a new Set to fill
-      ##  the entry
+      # if an entry is queried that doesn't exist, creates a new Set to fill
+      # the entry
       # @stashes = Hash.new {|h,key| h[key] = Set.new}
       ## Since we do not allow deletion of fiends, we expect the keys in
       ## @stashes to be precisely @table.fiends
@@ -279,9 +278,48 @@ class Table < ActiveRecord::Base
       generate_initial_bag
     end
 
-    def generate_initial_bag
-        puts 'generating bag'
-        self.initial_bag = INITIAL_BAG_LETTERS.split('').shuffle.join('')
+    def record_results
+      winner = determine_winner(current_state)
+      self.winner = winner
+
+      puts 'Winner: ' + winner.username
+
+      # ranking or leaderboard for 2, 1 players respectively
+      if fiends.length == 2
+        puts '2 players: adjust ratings'
+        if winner == fiends[0]
+          update_rank(fiends[0], fiends[1])
+        else
+          update_rank(fiends[1], fiends[0])
+        end
+      elsif fiends.length == 1
+          update_leaderboard(fiends[0])
+      end
     end
 
+    require 'saulabs/trueskill'
+    include Saulabs::TrueSkill
+    def update_rank(winner, loser)
+      puts 'winner, loser ' + winner.username + ', ' + loser.username
+      fiend_ratings = [winner.rating, loser.rating]
+
+      puts 'ratings before: ' + fiend_ratings.to_s
+
+      # high beta value because randomness is high
+      FactorGraph.new(fiend_ratings, [1,2], beta: 10).update_skills
+
+      winner.rating = fiend_ratings[0][0]
+      loser.rating = fiend_ratings[1][0]
+
+      puts 'ratings after: ' + [winner.rating, loser.rating].to_s
+    end
+
+    def update_leaderboard
+        # TODO implement
+    end
+
+    def generate_initial_bag
+      puts 'generating bag'
+      self.initial_bag = INITIAL_BAG_LETTERS.split('').shuffle.join('')
+    end
 end
