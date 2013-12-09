@@ -47,8 +47,8 @@ class User < ActiveRecord::Base
 
   def set_challengee(other_user)
     # We don't want orphaned challenges
-    if !self.challenge.nil?
-      self.challenge.destroy
+    if !self.outgoing_challenge.nil?
+      self.outgoing_challenge.destroy
     end
     challenge = Challenge.new(challenger: self, challengee: other_user)
     self.outgoing_challenge = challenge
