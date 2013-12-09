@@ -1,8 +1,8 @@
 BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
   get "lobby/status", as: 'lobby_status'
-  get "lobby/accept"
-  get "lobby/reject"
-  get "lobby/challenge"
+  post "lobby/accrej", as: 'accrej'
+  post "lobby/challenge", as: 'challenge'
+  post "lobby/withdraw", as: 'withdraw'
   resources :users
   # resources :tables
   get "table" => "tables#show_table", as: "show_table"

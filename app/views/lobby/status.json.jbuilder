@@ -1,6 +1,6 @@
 json.you_user current_user.username
 
-json.online_users Hash[User.online.map{|u| [u.username, u.rank]}]
+json.online_users Hash[User.online.select{|u| u != current_user}.map{|u| [u.username, u.rank]}]
 
 if current_user.outgoing_challenge.nil?
   json.outgoing_challenge nil

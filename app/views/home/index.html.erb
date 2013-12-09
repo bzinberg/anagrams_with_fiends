@@ -19,11 +19,26 @@
              <%= link_to 'Discard previous table and start anew', force_new_table_path, confirm: 'Are you sure?' %>
            <% end %>
            <br>
-           <div id="formDiv" class= "onlineBox">
+           <div id="onlineUsersDiv" class= "onlineBox">
+             <%= form_tag(challenge_url(format: :json), id: 'onlineUsersForm', remote: true) do %>
+               <input type="hidden" id="challengeeField" name="challengeeField" />
+               <div id="onlineUsersFormElts">
+               </div>
+             <% end %>
            </div>
-           <div id="challengesDiv" class= "onlineBox">
+           <div id="incomingchallengesDiv" class= "onlineBox">
+             <%= form_tag(accrej_url(format: :json), id: 'incomingChallengesForm', remote: true) do %>
+               <input type="hidden" id="challengerField" name="challengerField" />
+               <input type="hidden" id="challengeStatusField" name="challengeStatusField" />
+               <div id="incomingChallengesFormElts">
+               </div>
+             <% end %>
            </div>
-           <div id="currentChallengeDiv" class= "onlineBox">
+           <div id="outgoingChallengeDiv" class= "onlineBox">
+             <%= form_tag(withdraw_url(format: :json), id: 'outgoingChallengeForm', remote: true) do %>
+               <div id="outgoingChallengeFormElts">
+               </div>
+             <% end %>
            </div>
         <% else %>
             Welcome to Anagrams with Fiends!<br>

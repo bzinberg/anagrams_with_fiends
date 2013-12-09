@@ -9,29 +9,35 @@
 //     outgoing_challenge: {username: "damien", accepted: false},
 //     incoming_challenges: {leon: 4}
 // };
-var status_url = '<%= lobby_status_path format: :json %>';
-var show_table_url = '<%= show_table_path %>';
+var STATUS_URL = '<%= lobby_status_path format: :json %>',
+    SHOW_TABLE_URL = '<%= show_table_path %>',
+    LOBBY_REFRESH_DELAY = 5000;
 
-var $online_users_form = $('<form>'),
-    $incoming_challenges_form = $('<form>'),
-    $outgoing_challenge_form = $('<form>');
+var $online_users_form,
+    $incoming_challenges_form,
+    $outgoing_challenge_form;
 
 
+// Fetch the current lobby state from the server and update the lobby view
+// accordingly.
 var reloadLobby = function() {
-    console.log(status_url);
-    $.get(status_url).done(function(lobbyState) {
-        console.log('got it');
-        if(lobbyState.currently_in_game) {
-            window.location.replace(show_table_url);
-        } else {
-            updateUsers(lobbyState);
-            updateChallenges(lobbyState);
-            updateCurrentChallenge(lobbyState);
-            console.log('done updating');
-        }
+    $.get(STATUS_URL).done(function(lobbyState) {
+        processLobbyState(lobbyState);
     }).fail(function() {
         console.log('fail!');
     });
+}
+
+// Repopulate the view according to the new lobby state given by lobbyState.
+var processLobbyState = function(lobbyState) {
+    if(lobbyState.currently_in_game) {
+        window.location.replace(SHOW_TABLE_URL);
+    } else {
+        updateUsers(lobbyState);
+        updateChallenges(lobbyState);
+        updateCurrentChallenge(lobbyState);
+        console.log('done updating');
+    }
 }
 
 // Update the list of users that can be challenged
@@ -39,14 +45,21 @@ var updateUsers = function(lobbyState) {
     // console.log(lobbyState);
     var online_users = lobbyState.online_users;
     $online_users_form.html('');
-    $online_users_form.append("Online players <br>")
+    $online_users_form.append("Online players <br>");
     for (user in online_users) {
         // users is a hash username -> ranking
         var ranking = online_users[user];
-        var $row = $('<input type="radio" name="user" value=' + user + '>')
-        $online_users_form.append($row).append(user + ': ' + ranking).append($('<br>'));
+        // var $row = $('<input type="radio" name="username" id="username" value=' + user + '>');
+        // $online_users_form.append($row).append(user + ': ' + ranking).append($('<br>'));
+        var $row = $('<div>').html(user + ': ' + ranking + '&nbsp;');
+        var $challenge_button = $('<input type="button" id="Challenge" name="Challenge" style="font-size: 18px;">').val('Challenge').click(function() {
+            $challengee_field.val(user);
+            $('#onlineUsersForm').trigger('submit');
+        });
+        $row.append($challenge_button);
+        $online_users_form.append($row);
     };
-    $online_users_form.append('<input type="submit" value="Challenge" style="font-size: 18px;">')
+    // $online_users_form.append('<input type="submit" value="Challenge" style="font-size: 18px;">');
 };
 
 var updateChallenges = function(lobbyState) {
@@ -56,18 +69,42 @@ var updateChallenges = function(lobbyState) {
     for (user in challengers) {
         // challengers is a hash username -> ranking
         var ranking = challengers[user];
-        var $row = $('<input type="radio" name="challenger" value=' + user + '>')
-        $incoming_challenges_form.append($row).append(user + ': ' + ranking).append($('<br>'));
+        // var $row = $('<input type="radio" name="username" id="username" value=' + user + '>');
+        // $incoming_challenges_form.append($row).append(user + ': ' + ranking).append($('<br>'));
+        var $row = $('<div>').html(user + ': ' + ranking);
+        var $accept_button = $('<input type="button" id="Accept" name="Accept" style="font-size: 18px;">').val('Accept').click(function() {
+            $challenger_field.val(user);
+            $challenge_status_field.val('Accept');
+            $('#incomingChallengesForm').trigger('submit');
+        });
+        var $reject_button = $('<input type="button" id="Reject" name="Reject" style="font-size: 18px;">').val('Reject').click(function() {
+            $challenger_field.val(user);
+            $challenge_status_field.val('Reject');
+            $('#incomingChallengesForm').trigger('submit');
+        });
+        $row.append($accept_button);
+        $row.append($reject_button);
+        $incoming_challenges_form.append($row);
     };
-    $incoming_challenges_form.append('<input type="submit" value="Accept" style="font-size: 18px;">')
+    // $incoming_challenges_form.append('<input type="submit" id="Accept" name="Accept" value="Accept" style="font-size: 18px;">');
+    // $incoming_challenges_form.append('<input type="submit" id="Reject" name="Reject" value="Reject" style="font-size: 18px;">');
 };
 
 var updateCurrentChallenge = function(lobbyState) {
     $outgoing_challenge_form.html('');
     if(lobbyState.outgoing_challenge) {
         var challengee = lobbyState.outgoing_challenge.username;
-        $outgoing_challenge_form.append("Challenged:<br>" + challengee +  "<br>")
-        $outgoing_challenge_form.append('<input type="submit" value="Withdraw" style="font-size: 18px;">')
+        var challenge_status, withdraw_text;
+        if(lobbyState.outgoing_challenge.accepted === false) {
+            challenge_status = ' (rejected)';
+            withdraw_text = 'Clear';
+        } else {
+            challenge_status = '';
+            withdraw_text = 'Withdraw';
+        }
+        $outgoing_challenge_form.append("Challenged:<br>" + challengee + challenge_status + "<br>");
+        $outgoing_challenge_form.append($('<input type="hidden" id="username" name="username">').html(challengee));
+        $outgoing_challenge_form.append('<input type="submit" value="' + withdraw_text + '" style="font-size: 18px;">');
     } else {
         // Not really a "form" in this case, but oh well
         $outgoing_challenge_form.append('You have not yet challenged anyone.');
@@ -75,10 +112,25 @@ var updateCurrentChallenge = function(lobbyState) {
 };
 
 var lobby_ready = function() {
-    $('#formDiv').append($online_users_form);
-    $('#challengesDiv').append($incoming_challenges_form);
-    $('#currentChallengeDiv').append($outgoing_challenge_form);
-    setInterval(reloadLobby, 3000);
+    $('#onlineUsersForm').on('ajax:success', function(e, data) { processLobbyState(data); });
+    $('#incomingChallengesForm').on('ajax:success', function(e, data) { processLobbyState(data); });
+    $('#outgoingChallengeForm').on('ajax:success', function(e, data) { processLobbyState(data); });
+
+    // These are not the forms themselves, but contains for the elements (other
+    // than Rails authenticity token)
+    $online_users_form = $('#onlineUsersFormElts'),
+    $incoming_challenges_form = $('#incomingChallengesFormElts'),
+    $outgoing_challenge_form = $('#outgoingChallengeFormElts');
+
+    $challengee_field = $('#challengeeField')
+    $challenger_field = $('#challengerField')
+    $challenge_status_field = $('#challengeStatusField');
+
+    $('#onlineUsersForm').append($online_users_form);
+    $('#incomingChallengesForm').append($incoming_challenges_form);
+    $('#outgoingChallengeForm').append($outgoing_challenge_form);
+
+    setInterval(reloadLobby, LOBBY_REFRESH_DELAY);
     reloadLobby();
 };
 
