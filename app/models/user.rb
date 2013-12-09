@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many :incoming_challenges, class_name: 'Challenge', foreign_key: 'challengee_id'
   has_secure_password
   validates :username, presence: true, uniqueness: true
+  validates_length_of :username, maximum: 255
   has_many :turns
 
   # If a user hasn't polled lobby in more than LOBBY_TIMEOUT seconds, he is
