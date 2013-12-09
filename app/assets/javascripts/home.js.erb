@@ -1,57 +1,84 @@
+<% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
 
-var lobbyState = {
-    users: {
-        leon: 4,
-        ben: 3,
-        bethany: 9
-    },
-    challenge_to: ["damien", false],
-    challenges_from: {leon: 4}
-};
+// var lobbyState = {
+//     online_users: {
+//         leon: 4,
+//         ben: 3,
+//         bethany: 9
+//     },
+//     outgoing_challenge: {username: "damien", accepted: false},
+//     incoming_challenges: {leon: 4}
+// };
+var status_url = '<%= lobby_status_path format: :json %>';
+var show_table_url = '<%= show_table_path %>';
+
+var $online_users_form = $('<form>'),
+    $incoming_challenges_form = $('<form>'),
+    $outgoing_challenge_form = $('<form>');
+
+
+var reloadLobby = function() {
+    console.log(status_url);
+    $.get(status_url).done(function(lobbyState) {
+        console.log('got it');
+        if(lobbyState.currently_in_game) {
+            window.location.replace(show_table_url);
+        } else {
+            updateUsers(lobbyState);
+            updateChallenges(lobbyState);
+            updateCurrentChallenge(lobbyState);
+            console.log('done updating');
+        }
+    }).fail(function() {
+        console.log('fail!');
+    });
+}
 
 // Update the list of users that can be challenged
 var updateUsers = function(lobbyState) {
-    console.log(lobbyState);
-    var users = lobbyState.users;
-    var $form = $('<form>');
-    $form.append("Online players <br>")
-    for (user in users) {
+    // console.log(lobbyState);
+    var online_users = lobbyState.online_users;
+    $online_users_form.html('');
+    $online_users_form.append("Online players <br>")
+    for (user in online_users) {
         // users is a hash username -> ranking
-        var ranking = users[user];
+        var ranking = online_users[user];
         var $row = $('<input type="radio" name="user" value=' + user + '>')
-        $form.append($row).append(user + ': ' + ranking).append($('<br>'));
+        $online_users_form.append($row).append(user + ': ' + ranking).append($('<br>'));
     };
-    $form.append('<input type="submit" value="Challenge" style="font-size: 18px;">')
-    $('#formDiv').append($form);
+    $online_users_form.append('<input type="submit" value="Challenge" style="font-size: 18px;">')
 };
 
 var updateChallenges = function(lobbyState) {
-    var users = lobbyState.challenges_from;
-    var $form = $('<form>');
-    $form.append("Challenges Received <br>")
-    for (user in users) {
-        // users is a hash username -> ranking
-        var ranking = users[user];
+    var challengers = lobbyState.incoming_challenges;
+    $incoming_challenges_form.html('');
+    $incoming_challenges_form.append("Challenges Received <br>")
+    for (user in challengers) {
+        // challengers is a hash username -> ranking
+        var ranking = challengers[user];
         var $row = $('<input type="radio" name="challenger" value=' + user + '>')
-        $form.append($row).append(user + ': ' + ranking).append($('<br>'));
+        $incoming_challenges_form.append($row).append(user + ': ' + ranking).append($('<br>'));
     };
-    $form.append('<input type="submit" value="Accept" style="font-size: 18px;">')
-    $('#challengesDiv').append($form);
+    $incoming_challenges_form.append('<input type="submit" value="Accept" style="font-size: 18px;">')
 };
 
 var updateCurrentChallenge = function(lobbyState) {
-    var challenge = lobbyState.challenge_to[0];
-    var $form = $('<form>');
-    $form.append("Challenged:<br>" + challenge+  "<br>")
-    $form.append('<input type="submit" value="Withdraw" style="font-size: 18px;">')
-    $('#currentChallengeDiv').append($form);
+    $outgoing_challenge_form.html('');
+    if(lobbyState.outgoing_challenge) {
+        var challengee = lobbyState.outgoing_challenge.username;
+        $outgoing_challenge_form.append("Challenged:<br>" + challengee +  "<br>")
+        $outgoing_challenge_form.append('<input type="submit" value="Withdraw" style="font-size: 18px;">')
+    } else {
+        // Not really a "form" in this case, but oh well
+        $outgoing_challenge_form.append('You have not yet challenged anyone.');
+    }
 };
 
-var ready = function() {
-    updateUsers(lobbyState);
-    updateChallenges(lobbyState)
-    updateCurrentChallenge(lobbyState)
-    console.log('done updating');
+var lobby_ready = function() {
+    $('#formDiv').append($online_users_form);
+    $('#challengesDiv').append($incoming_challenges_form);
+    $('#currentChallengeDiv').append($outgoing_challenge_form);
+    setInterval(reloadLobby, 3000);
+    reloadLobby();
 };
 
-$(ready);

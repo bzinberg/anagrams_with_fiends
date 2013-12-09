@@ -1,5 +1,5 @@
 BzinbergJiangtydYczLapentabFinal::Application.routes.draw do
-  get "lobby/status"
+  get "lobby/status", as: 'lobby_status'
   get "lobby/accept"
   get "lobby/reject"
   get "lobby/challenge"

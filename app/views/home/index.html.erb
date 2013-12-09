@@ -1,12 +1,17 @@
 <center>
-   <% if signed_in? %>
-   </center><div align="right"><font size="2px" align="right"> <%= link_to 'Log Out', log_out_path %></font></div><br><center>
+    <% if signed_in? %>
+      <% content_for :head do %>
+        <%= javascript_tag do %>
+          $(lobby_ready);
+        <% end %>
+      <% end %>
+      </center><div align="right"><font size="2px" align="right"> <%= link_to 'Log Out', log_out_path %></font></div><br><center>
     <% end %>
     <div id="header">
       <img src="<%= asset_path 'green-fiend-clipart.png' %>" width = 150px> 
         <img src="<%= asset_path 'purple-fiend-clipart.png' %>" width=150px/><br>
         <% if signed_in? %>
-            Welcome to Anagrams with Fiends! <br>You are logged in.<br>
+          Welcome to Anagrams with Fiends! <br>You are logged in as <%= current_user.username %>.<br>
             <% if current_user.table.nil? %>
              <%= link_to 'Start Table', show_table_path %>
            <% else %>
