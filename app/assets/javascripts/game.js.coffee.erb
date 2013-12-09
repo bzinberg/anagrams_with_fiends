@@ -97,7 +97,7 @@ window.initTable = (table_uuid) ->
         i = 0
         letters.split("").forEach((letter) ->
             # If the tile is mod 10, make a new line
-            if (i%10==0)
+            if (i%10==0 and i > 0)
                 $poolDiv.append("<br>")
             i++
             appendLetter($poolDiv, letter)
