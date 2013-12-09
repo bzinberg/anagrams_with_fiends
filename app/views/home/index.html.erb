@@ -1,3 +1,4 @@
+<!--- Primary Authors: Leon and Bethany -->
 <center>
     <% if signed_in? %>
       <% content_for :head do %>
@@ -13,7 +14,7 @@
         <% if signed_in? %>
           Welcome to Anagrams with Fiends! <br>You are logged in as <%= current_user.username %>.<br>
             <% if current_user.table.nil? %>
-             <%= link_to 'Start Table', show_table_path %>
+             <%= link_to 'Start A Singleplayer Table', show_table_path %>
           <% else %>
              <%= link_to 'Return to your previous table', show_table_path %><br>
              <%=
@@ -21,27 +22,31 @@
               %>
            <% end %>
            <br>
-           <div id="onlineUsersDiv" class= "onlineBox">
-             <%= form_tag(challenge_url(format: :json), id: 'onlineUsersForm', remote: true) do %>
-               <input type="hidden" id="challengeeField" name="challengeeField" />
-               <div id="onlineUsersFormElts">
+           <div id = "lobbyDiv">
+             <div id="onlineUsersDiv" class= "onlineBox">
+               <%= form_tag(challenge_url(format: :json), id: 'onlineUsersForm', remote: true) do %>
+                 <input type="hidden" id="challengeeField" name="challengeeField" />
+                 <div id="onlineUsersFormElts">
+                 </div>
+               <% end %>
+             </div>
+             <div id = "challengesDiv">
+               <div id="outgoingChallengeDiv" class= "onlineBox">
+                 <%= form_tag(withdraw_url(format: :json), id: 'outgoingChallengeForm', remote: true) do %>
+                   <div id="outgoingChallengeFormElts">
+                   </div>
+                 <% end %>
                </div>
-             <% end %>
-           </div>
-           <div id="incomingchallengesDiv" class= "onlineBox">
-             <%= form_tag(accrej_url(format: :json), id: 'incomingChallengesForm', remote: true) do %>
-               <input type="hidden" id="challengerField" name="challengerField" />
-               <input type="hidden" id="challengeStatusField" name="challengeStatusField" />
-               <div id="incomingChallengesFormElts">
+               <div id="incomingChallengesDiv" class= "onlineBox">
+                 <%= form_tag(accrej_url(format: :json), id: 'incomingChallengesForm', remote: true) do %>
+                   <input type="hidden" id="challengerField" name="challengerField" />
+                   <input type="hidden" id="challengeStatusField" name="challengeStatusField" />
+                   <div id="incomingChallengesFormElts">
+                   </div>
+                 <% end %>
                </div>
-             <% end %>
-           </div>
-           <div id="outgoingChallengeDiv" class= "onlineBox">
-             <%= form_tag(withdraw_url(format: :json), id: 'outgoingChallengeForm', remote: true) do %>
-               <div id="outgoingChallengeFormElts">
-               </div>
-             <% end %>
-           </div>
+            </div>
+          </div>
         <% else %>
             Welcome to Anagrams with Fiends!<br>
             <%= link_to 'Log In', log_in_path %> <br>

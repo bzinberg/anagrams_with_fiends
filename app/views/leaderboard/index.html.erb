@@ -1,3 +1,5 @@
+<!-- Primary Authors: Leon and Bethany-->
+
 <center>
     <div id="header">
       <img src="<%= asset_path 'green-fiend-clipart.png' %>" width=150px> 
@@ -17,7 +19,7 @@
             <tr>
               <td><%= i+1 %></td>
               <td><%= user.username %></td>
-              <td>5</td>
+              <td><%= user.rank %></td>
             </tr>
           <% end %>
           </tbody>
@@ -36,7 +38,7 @@
             <tr>
               <td><%= i+1 %></td>
               <td><%= user.username %></td>
-              <td>500</td>
+              <td><%= user.high_score %></td>
             </tr>
           <% end %>
           </tbody>

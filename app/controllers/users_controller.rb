@@ -1,3 +1,5 @@
+# Author: Bethany
+
 class UsersController < ApplicationController
   def new
     # redirect to index if the user is already logged in
@@ -7,10 +9,8 @@ class UsersController < ApplicationController
     @user = User.new
   end
 
-
   # Somehow the built-in validation for nil password_digest was not working, so I added a custom validation
   def create
-    puts(user_params)
     @user = User.new(user_params)
 
     if @user.password == ""
