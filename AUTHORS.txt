@@ -1,0 +1,6 @@
+Authors:
+
+Bethany LaPenta <lapentab@mit.edu>
+Ben Zinberg <bzinberg@mit.edu>
+Leon Zhou <ycz@mit.edu>
+Damien Jiang <jiangty@mit.edu>
