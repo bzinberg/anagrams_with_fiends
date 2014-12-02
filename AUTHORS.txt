@@ -1,6 +1,6 @@
 Authors:
 
-Bethany LaPenta <lapentab@mit.edu>
-Ben Zinberg <bzinberg@mit.edu>
-Leon Zhou <ycz@mit.edu>
-Damien Jiang <jiangty@mit.edu>
+Bethany LaPenta <lapentab@mit.edu> (github: lapentab)
+Ben Zinberg <bzinberg@mit.edu> (github: bzinberg)
+Leon Zhou <ycz@mit.edu> (github: ycz)
+Damien Jiang <jiangty@mit.edu> (github: jiangtyd)
